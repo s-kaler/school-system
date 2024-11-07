@@ -1,6 +1,9 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+
 
 from config import db, bcrypt
 
@@ -9,90 +12,81 @@ class Department(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
 
-    classses = db.relationship('Class', back_populates='department')
+    courses = db.relationship('Course', back_populates='department')
+    teachers = db.relationship('Teacher', back_populates='department')
 
 
-class Class(db.Model, SerializerMixin):
-    __tablename__ = 'classes'
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String, nullable=False)
+    last_name = db.Column(db.String, nullable=False)
+    email= db.Column(db.String, unique=True, nullable=False)
+    _password_hash = db.Column(db.String, nullable=False)
+    user_type = db.Column(db.String, nullable=False)
+    __mapper_args__ = {'polymorphic_on': user_type}
+
+    @hybrid_property
+    def password_hash(self):
+        raise AttributeError('Password hashes may not be viewed.')
+
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(
+            password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(
+            self._password_hash, password.encode('utf-8'))
+    
+
+#make teacher and student children of user class
+
+class Teacher(User):
+    __tablename__ = 'teachers'
+    __mapper_args__ = {'polymorphic_identity': 'teacher'}
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    
+    department_id = db.Column(db.Integer, db.ForeignKey("departments.id"))
+    department = db.relationship('Department', back_populates="teachers")
+
+    courses = db.relationship('Course', back_populates='teacher')
+
+
+class Student(User):
+    __tablename__ = 'students'
+    __mapper_args__ = {'polymorphic_identity': 'student'}
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+
+    course_enrollments = db.relationship('CourseEnrollment', back_populates='student', cascade='all, delete-orphan')
+    courses = association_proxy('course_enrollments', 'course', creator=lambda course_obj: CourseEnrollment(course=course_obj))
+
+
+class Course(db.Model, SerializerMixin):
+    __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
-    department = db.relationship('Department', back_populates='classses')
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)
+    department = db.relationship('Department', back_populates='courses')
 
-    #teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'), nullable=False)
+    teacher = db.relationship('Teacher', back_populates='courses')
 
-class Teacher(db.Model, SerializerMixin):
-    __tablename__ = 'teachers'
+    course_enrollments = db.relationship('CourseEnrollment',  back_populates='course', cascade='all, delete-orphan')
+    students = association_proxy('course_enrollments', 'student', creator=lambda student_obj: CourseEnrollment(student=student_obj))
+
+#proxy models
+
+#students to courses
+class CourseEnrollment(db.Model):
+    __tablename__ = 'course_enrollments'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String)
-    last_name = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
-    password_hash = db.Column(db.String(128))
-    classes = association_proxy('class_teachers', 'class')
 
-    @hybrid_property
-    def full_name(self):
-        return f'{self.first_name} {self.last_name}'
-    
-    @full_name.setter
-    def full_name(self, value):
-        first_name, last_name = value.split(' ')
-        self.first_name = first_name
-        self.last_name = last_name
+    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
+    student = db.relationship('Student', back_populates='course_enrollments')
 
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
-    
-    class_teachers = db.relationship('ClassTeacher', back_populates='teacher')
-
-
-class ClassTeacher(db.Model):
-    __tablename__ = 'class_teachers'
-    id = db.Column(db.Integer, primary_key=True)
-    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
-    class_ = db.relationship('Class', back_populates='class_teachers')
-    teacher = db.relationship('Teacher', back_populates='class_teachers')
-
-
-class Student(db.Model):
-    __tablename__ = 'students'
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String)
-    last_name = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
-    password_hash = db.Column(db.String(128))
-    classes = association_proxy('student_classes', 'class')
-
-    @hybrid_property
-    def full_name(self):
-        return f'{self.first_name} {self.last_name}'
-    
-    @full_name.setter
-    def full_name(self, value):
-        first_name, last_name = value.split(' ')
-        self.first_name = first_name
-        self.last_name = last_name
-
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
-    
-    class_teachers = db.relationship('StudentClass', back_populates='student')
-    student_classes = db.relationship('Class', secondary='student_classes', back_populates='students')
-
-
-class StudentClass(db.Model):
-    __tablename__ = 'student_classes'
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
-    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'))
-    student = db.relationship('Student', back_populates='student_classes')
-    class_ = db.relationship('Class', back_populates='student_classes')
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    course = db.relationship('Course', back_populates='course_enrollments')
 
