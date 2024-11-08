@@ -7,14 +7,6 @@ from sqlalchemy.orm import mapped_column
 
 from config import db, bcrypt
 
-class Department(db.Model, SerializerMixin):
-    __tablename__ = 'departments'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
-
-    courses = db.relationship('Course', back_populates='department')
-    teachers = db.relationship('Teacher', back_populates='department')
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -47,6 +39,7 @@ class Teacher(User):
     __tablename__ = 'teachers'
     __mapper_args__ = {'polymorphic_identity': 'teacher'}
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    rating = db.Column(db.Integer)
     
     department_id = db.Column(db.Integer, db.ForeignKey("departments.id"))
     department = db.relationship('Department', back_populates="teachers")
@@ -58,15 +51,27 @@ class Student(User):
     __tablename__ = 'students'
     __mapper_args__ = {'polymorphic_identity': 'student'}
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    major = db.Column(db.String)
+    gpa = db.Column(db.Float)
 
     course_enrollments = db.relationship('CourseEnrollment', back_populates='student', cascade='all, delete-orphan')
     courses = association_proxy('course_enrollments', 'course', creator=lambda course_obj: CourseEnrollment(course=course_obj))
+
+
+class Department(db.Model, SerializerMixin):
+    __tablename__ = 'departments'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+
+    courses = db.relationship('Course', back_populates='department')
+    teachers = db.relationship('Teacher', back_populates='department')
 
 
 class Course(db.Model, SerializerMixin):
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    credits = db.Column(db.Integer)
 
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)
     department = db.relationship('Department', back_populates='courses')
@@ -83,6 +88,8 @@ class Course(db.Model, SerializerMixin):
 class CourseEnrollment(db.Model):
     __tablename__ = 'course_enrollments'
     id = db.Column(db.Integer, primary_key=True)
+    enrollment_date = db.Column(db.DateTime)
+    grade = db.Column(db.Integer)
 
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     student = db.relationship('Student', back_populates='course_enrollments')
