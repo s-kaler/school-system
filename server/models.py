@@ -33,7 +33,12 @@ class User(db.Model):
             self._password_hash, password.encode('utf-8'))
     
 
-#make teacher and student children of user class
+#make admin, teacher, and student children of user class
+
+class Admin(User):
+    __tablename__ = 'admins'
+    __mapper_args__ = {'polymorphic_identity': 'admin'}
+    id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 
 class Teacher(User):
     __tablename__ = 'teachers'
@@ -82,7 +87,8 @@ class Course(db.Model, SerializerMixin):
     course_enrollments = db.relationship('CourseEnrollment',  back_populates='course', cascade='all, delete-orphan')
     students = association_proxy('course_enrollments', 'student', creator=lambda student_obj: CourseEnrollment(student=student_obj))
 
-#proxy models
+    assignments = db.relationship('Assignment', back_populates='course', cascade='all, delete-orphan')
+
 
 #students to courses
 class CourseEnrollment(db.Model):
@@ -96,4 +102,38 @@ class CourseEnrollment(db.Model):
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     course = db.relationship('Course', back_populates='course_enrollments')
+
+    submissions = db.relationship('Submission', back_populates='course_enrollment', cascade='all, delete-orphan')
+    assignments = association_proxy('submissions', 'assignment', creator=lambda assignment_obj: Submission(assignment=assignment_obj))
+
+
+class Assignment(db.Model):
+    __tablename__ = 'assignments'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    description = db.Column(db.String)
+    published = db.Column(db.Boolean)
+    published_at = db.Column(db.DateTime)
+    due_date = db.Column(db.DateTime)
+
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+    course = db.relationship('Course', back_populates='assignments')
+
+    submissions = db.relationship('Submission', back_populates='assignment', cascade='all, delete-orphan')
+    course_enrollments = association_proxy('submissions', 'course_enrollment', creator=lambda enrollment_obj:  Submission(course_enrollment=enrollment_obj))
+
+
+class Submission(db.Model):
+    __tablename__ = 'submissions'
+    id = db.Column(db.Integer, primary_key=True)
+    file_path = db.Column(db.String)
+    submitted_at = db.Column(db.DateTime)
+    grade = db.Column(db.Integer)
+
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
+    assignment = db.relationship('Assignment', back_populates='submissions')
+
+    course_enrollment_id = db.Column(db.Integer, db.ForeignKey('course_enrollments.id'), nullable=False)
+    course_enrollment = db.relationship('CourseEnrollment', back_populates='submissions')
+
 
