@@ -122,7 +122,7 @@ class Assignment(db.Model):
     submissions = db.relationship('Submission', back_populates='assignment', cascade='all, delete-orphan')
     course_enrollments = association_proxy('submissions', 'course_enrollment', creator=lambda enrollment_obj:  Submission(course_enrollment=enrollment_obj))
 
-
+#enrollments to assignments
 class Submission(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)

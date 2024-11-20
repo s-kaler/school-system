@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
-import './App.css';
 
-function LoginForm({ onLogin }) {
+function LoginForm({ onLogin, setUser }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
-    const [user, setUser, userPlaylists] = useOutletContext();
 
     function handleSubmit(e) {
         e.preventDefault();

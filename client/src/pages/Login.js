@@ -1,38 +1,14 @@
 import { useState } from "react";
-import styled from "styled-components";
+import { useOutletContext } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
-import SignUpForm from "../components/SignUpForm";
-import { Button } from "../styles";
 
-function Login({ onLogin }) {
+function Login({ setUser }) {
     const [showLogin, setShowLogin] = useState(true);
 
     return (
-        <Wrapper>
-            {showLogin ? (
-                <>
-                    <LoginForm onLogin={onLogin} />
-                    <Divider />
-                    <p>
-                        Don't have an account? &nbsp;
-                        <Button color="secondary" onClick={() => setShowLogin(false)}>
-                            Sign Up
-                        </Button>
-                    </p>
-                </>
-            ) : (
-                <>
-                    <SignUpForm onLogin={onLogin} />
-                    <Divider />
-                    <p>
-                        Already have an account? &nbsp;
-                        <Button color="secondary" onClick={() => setShowLogin(true)}>
-                            Log In
-                        </Button>
-                    </p>
-                </>
-            )}
-        </Wrapper>
+        <>
+            <LoginForm setUser={setUser}/>
+        </>
     );
 }
 
