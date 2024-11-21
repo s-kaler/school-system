@@ -8,7 +8,7 @@ from sqlalchemy.orm import mapped_column
 from config import db, bcrypt
 
 
-class User(db.Model):
+class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String, nullable=False)

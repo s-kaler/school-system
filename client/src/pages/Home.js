@@ -5,9 +5,9 @@ function Home() {
     
     return (
         <div>
-            <h1>Welcome to the Home Page!</h1>
+            <h1>Fake School</h1>
             <p>
-                You can access other pages by clicking on the navigation links below.
+                This is about the school.
             </p>
             <ul>
                 <li><Link to="/about">About</Link></li>
@@ -18,3 +18,5 @@ function Home() {
     )
 
 }
+
+export default Home;

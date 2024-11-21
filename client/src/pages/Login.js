@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
-function Login({ setUser }) {
+function Login( ) {
     const [showLogin, setShowLogin] = useState(true);
+    const [user, setUser] = useOutletContext();
 
     return (
         <>

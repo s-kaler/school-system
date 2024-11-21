@@ -11,10 +11,7 @@ function NavBar({ user, setUser }) {
     function handleLogoutClick() {
         fetch("/logout", { method: "DELETE" }).then((r) => {
             if (r.ok) {
-                setUser({
-                    username: '',
-                    id: '',
-                });
+                setUser(null);
                 navigate("/");
             }
         });
@@ -26,7 +23,7 @@ function NavBar({ user, setUser }) {
                 //add link to admin dashboard if user is admin
                 return (
                     <>
-                        <NavLink to="/admin" className="nav-link">Admin Dashboard</NavLink>
+                        <NavLink to="/dashboard" className="nav-link">Admin Dashboard</NavLink>
                     </>
                 )
             }
@@ -34,7 +31,7 @@ function NavBar({ user, setUser }) {
                 //add link to teacher dashboard if user is teacher
                 return (
                     <>
-                        <NavLink to="/teacher" className="nav-link">Teacher Dashboard</NavLink>
+                        <NavLink to="/dashboard" className="nav-link">Teacher Dashboard</NavLink>
                     </>
                 )
             }
@@ -42,7 +39,7 @@ function NavBar({ user, setUser }) {
                 //add link to student dashboard if user is student
                 return (
                     <>
-                        <NavLink to="/student" className="nav-link">Student Dashboard</NavLink>
+                        <NavLink to="/dashboard" className="nav-link">Student Dashboard</NavLink>
                     </>
                 )
             }
@@ -59,7 +56,9 @@ function NavBar({ user, setUser }) {
     return (
         <nav className="navbar">
             <NavLink to="/" className="nav-link">Home</NavLink>
+            {" "}
             {userLinks(user)}
+            {" "}
             {user ?
                 <button onClick={handleLogoutClick} className="logging">Log Out</button> :
                 <button onClick={handleLoginClick} className="logging">Log In</button>

@@ -27,7 +27,7 @@ function App() {
     
     return <div>
         <main>
-            <NavBar setUser={setUser}/>
+            <NavBar user={user} setUser={setUser}/>
             <Outlet context={[user, setUser]} />
         </main>
     </div>

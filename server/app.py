@@ -20,9 +20,6 @@ def index():
     return '<h1>Project Server</h1>'
 
 
-if __name__ == '__main__':
-    app.run(port=5555, debug=True)
-
 
 class Signup(Resource):
     def post(self):
@@ -68,6 +65,12 @@ class Login(Resource):
             password = request.get_json()['password']
             if user.authenticate(password):
                 session['user_id'] = user.id
+                if user.user_type == 'admin':
+                    user = Admin.query.filter(Admin.id == user.id).first()
+                elif user.user_type == 'teacher':
+                    user = Teacher.query.filter(Teacher.id == user.id).first()
+                elif user.user_type =='student':
+                    user = Student.query.filter(Student.id == user.id).first()
                 return user.to_dict(), 200
         return {'error': 'Invalid email or password'}, 401
 
@@ -83,3 +86,6 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
+
+if __name__ == '__main__':
+    app.run(port=5555, debug=True)
