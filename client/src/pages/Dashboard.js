@@ -6,8 +6,13 @@ function Dashboard() {
     const [user, setUser] = useOutletContext();
     //console.log(user)
     let userDashboard = null
-    if (user.user_type === "admin") {
-        userDashboard = <AdminDashboard admin={user} />
+    if (user) {
+        if (user.user_type === "admin") {
+            userDashboard = <AdminDashboard admin={user} />
+        }
+    }
+    else {
+        return (<p>Please login to access your dashboard.</p>)
     }
 
     return (

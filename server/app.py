@@ -20,7 +20,6 @@ def index():
     return '<h1>Project Server</h1>'
 
 
-
 class Signup(Resource):
     def post(self):
         json = request.get_json()
@@ -86,6 +85,164 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
+
+class Courses(Resource):
+    def get(self):
+        courses = Course.query.all()
+        return [course.to_dict() for course in courses]
+    
+    def post(self):
+        json = request.get_json()
+        if 'name' not in json:
+            return {'error': 'Missing required field'}, 422
+        
+        course = Course(name=json['name'])
+
+        try:
+            db.session.add(course)
+            db.session.commit()
+            return course.to_dict(), 201
+        except Exception as err:
+            session.rollback()
+            if "UNIQUE constraint failed: courses.name" in str(err):
+                return {'error': 'Course name already exists'}, 422
+            
+api.add_resource(Courses, '/courses', endpoint='course')
+
+class CourseById(Resource):
+    def get(self, course_id):
+        course = Course.query.filter(Course.id == course_id).first()
+        if course:
+            return course.to_dict()
+        else:
+            return {'error': 'Course not found'}, 404
+        
+    def patch(self, course_id):
+        course = Course.query.filter(Course.id == course_id).first()
+        if course:
+            json = request.get_json()
+            if 'name' in json:
+                course.name = json['name']
+            if 'department_id' in json:
+                course.department_id = json['department_id']
+            if 'teacher_id' in json:
+                course.teacher_id = json['teacher_id']
+
+            db.session.commit()
+            return course.to_dict()
+        else:
+            return {'error': 'Course not found'}, 404
+        
+    def delete(self, course_id):
+        course = Course.query.filter(Course.id == course_id).first()
+        if course:
+            db.session.delete(course)
+            db.session.commit()
+            return {}, 204
+        else:
+            return {'error': 'Course not found'}, 404
+        
+api.add_resource(CourseById, '/courses/<int:course_id>', endpoint='course_by_id')
+
+class Teachers(Resource):
+    def get(self):
+        teachers = Teacher.query.all()
+        return [teacher.to_dict() for teacher in teachers]
+    
+    def post(self):
+        json = request.get_json()
+        if 'first_name' not in json or 'last_name' not in json or 'email' not in json or 'password' not in json or 'department_id' not in json:
+            return {'error': 'Missing required fields'}, 422
+        
+        teacher = Teacher(
+            first_name=json['first_name'],
+            last_name=json['last_name'],
+            email=json['email'],
+            department_id=json['department_id']
+        )
+        teacher.password_hash = json['password']
+
+        try:
+            db.session.add(teacher)
+            db.session.commit()
+            return teacher.to_dict(), 201
+        except Exception as err:
+            session.rollback()
+            if "UNIQUE constraint failed: teachers.email" in str(err):
+                return {'error': 'Email already exists'}, 422
+
+api.add_resource(Teachers, '/teachers', endpoint='teachers')
+
+class TeacherById(Resource):
+    def get(self, teacher_id):
+        teacher = Teacher.query.filter(Teacher.id == teacher_id).first()
+        if teacher:
+            return teacher.to_dict()
+        else:
+            return {'error': 'Teacher not found'}, 404
+        
+    def patch(self, teacher_id):
+        teacher = Teacher.query.filter(Teacher.id == teacher_id).first()
+        if teacher:
+            json = request.get_json()
+            if 'first_name' in json:
+                teacher.first_name = json['first_name']
+            if 'last_name' in json:
+                teacher.last_name = json['last_name']
+            if 'email' in json:
+                teacher.email = json['email']
+            if 'department_id' in json:
+                teacher.department_id = json['department_id']
+
+            db.session.commit()
+            return teacher.to_dict()
+        else:
+            return {'error': 'Teacher not found'}, 404
+        
+    def delete(self, teacher_id):
+        teacher = Teacher.query.filter(Teacher.id == teacher_id).first()
+        if teacher:
+            db.session.delete(teacher)
+            db.session.commit()
+            return {}, 204
+        else:
+            return {'error': 'Teacher not found'}, 404
+        
+
+api.add_resource(TeacherById, '/teachers/<int:teacher_id>', endpoint='teacher_by_id')
+
+
+class Students(Resource):
+    def get(self):
+        students = Student.query.all()
+        return [student.to_dict() for student in students]
+    
+    def post(self):
+        json = request.get_json()
+        if 'first_name' not in json or 'last_name' not in json or 'email' not in json or 'password' not in json or 'department_id' not in json:
+            return {'error': 'Missing required fields'}, 422
+        
+        student = Student(
+            first_name=json['first_name'],
+            last_name=json['last_name'],
+            email=json['email'],
+            department_id=json['department_id']
+        )
+        student.password_hash = json['password']
+
+        try:
+            db.session.add(student)
+            db.session.commit()
+            return student.to_dict(), 201
+        except Exception as err:
+            session.rollback()
+            if "UNIQUE constraint failed: students.email" in str(err):
+                return {'error': 'Email already exists'}, 422
+    
+api.add_resource(Students, '/students', endpoint='students')
+
+
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
