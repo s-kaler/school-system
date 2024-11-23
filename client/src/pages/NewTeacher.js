@@ -5,18 +5,32 @@ import * as yup from 'yup'
 
 function NewTeacher() {
     const navigate = useNavigate()
-    const nodemailer = require('nodemailer');
     const [isLoading, setIsLoading] = useState(false)
     const [refreshPage, setRefreshPage] = useState(false);
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [departments, setDepartments] = useState([]);
+    const [teachers, setTeachers] = useState([]);
+
+    useEffect(() => {
+        fetch("/teachers")
+            .then((res) => res.json())
+            .then((data) => { setTeachers(data) })
+        fetch("/departments")
+            .then(res => res.json())
+            .then((data) => {
+                setDepartments(data)
+                setIsLoading(false)
+            })
+    }, [])
 
     const initialValues = {
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
+        password: '',
+        departmentId: 0,
     }
-
     const formSchema = yup.object({
         firstName: yup.string().required('First name is required'),
         lastName: yup.string().required('Last name is required'),
@@ -28,6 +42,7 @@ function NewTeacher() {
         initialValues,
         validationSchema: formSchema,
         onSubmit: (values) => {
+            console.log(values)
             fetch("/teachers", {
                 method: "POST",
                 headers: {
@@ -35,26 +50,32 @@ function NewTeacher() {
                 },
                 body: JSON.stringify(values, null, 2),
             }).then((res) => {
-                if (res.status == 201) {
+                if (res.status === 201) {
                     setRefreshPage(!refreshPage);
                     setIsSubmitted(true);
                     //alert("Successfully signed up!")
                     const interval = setTimeout(() => {
                         navigate("/dashboard");
                     }, 500);
-
                 }
-                else if (res.status == 422) {
+                else if (res.status === 422) {
                     console.log(res.error);
                 }
             });
         },
     });
 
+    let departmentOptions = []
+
+    if (departments) {
+        departmentOptions = departments.map((department) => {
+            return <option key={department.id} value={department.id}>{department.name}</option>
+        })
+    }
 
     // Send the email
     function handleEmail() {
-        
+        return null
     }
 
 
@@ -66,22 +87,22 @@ function NewTeacher() {
         <div>
             <h1>Create New Teacher Account</h1>
             <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="first-name">First Name</label>
+                <label htmlFor="firstName">First Name</label>
                 <br />
                 <input
-                    id="first-name"
-                    name="first-name"
+                    id="firstName"
+                    name="firstName"
                     onChange={formik.handleChange}
                     value={formik.values.firstName}
                 />
                 <p style={{ color: "red" }}> {formik.errors.firstName}</p>
                 <br />
 
-                <label htmlFor="last-name">Last Name</label>
+                <label htmlFor="lastName">Last Name</label>
                 <br />
                 <input
-                    id="last-name"
-                    name="last-name"
+                    id="lastName"
+                    name="lastName"
                     onChange={formik.handleChange}
                     value={formik.values.lastName}
                 />
@@ -98,6 +119,16 @@ function NewTeacher() {
                 />
                 <p style={{ color: "red" }}> {formik.errors.email}</p>
 
+                <label htmlFor="departments">Select Department</label>
+                <br />
+                <select
+                    name="departments"
+                    value={formik.values.departmentId}
+                    onChange={formik.handleChange}
+                >
+                    {departmentOptions}
+                </select>
+                <br />
 
                 {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
 
@@ -105,7 +136,7 @@ function NewTeacher() {
             <p>{error}</p>
             {isSubmitted ? <p></p> : null}
 
-            <button name="send-mail" onClick={() => {handleEmail}}>Send Email</button>
+            <button name="send-mail" onClick={() => {handleEmail()}}>Send Email</button>
         </div>
     );
 }

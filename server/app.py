@@ -6,6 +6,7 @@
 from flask import Flask, jsonify, request, make_response, session
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
+from flask_mail import Mail, Message
 
 # Local imports
 from config import app, db, api
@@ -181,8 +182,8 @@ class Teachers(Resource):
             return {'error': 'Missing required fields'}, 422
         
         teacher = Teacher(
-            first_name=json['first_name'],
-            last_name=json['last_name'],
+            first_name=json['firstName'],
+            last_name=json['lastName'],
             email=json['email'],
             department_id=json['department_id']
         )
@@ -268,6 +269,12 @@ class Students(Resource):
 api.add_resource(Students, '/students', endpoint='students')
 
 
+
+def send_email(recipient):
+    msg = Message('Hello', sender='skalerproject@gmail.com', recipients=[recipient])
+    msg.body = 'This is a test email.'
+    Mail.send(msg)
+    return {'message': 'Email sent successfully'}
 
 
 if __name__ == '__main__':

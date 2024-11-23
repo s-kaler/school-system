@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from flask_mail import Mail
 
 from flask_bcrypt import Bcrypt
 
@@ -34,3 +35,12 @@ api = Api(app)
 CORS(app)
 
 bcrypt = Bcrypt(app)
+
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME = 'skalerproject@gmail.com',
+    MAIL_PASSWORD = 'juih nuiu anml iega'
+)
+mail = Mail(app)

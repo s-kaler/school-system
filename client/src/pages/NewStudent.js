@@ -34,7 +34,7 @@ function NewStudent() {
                 },
                 body: JSON.stringify(values, null, 2),
             }).then((res) => {
-                if (res.status == 201) {
+                if (res.status === 201) {
                     setRefreshPage(!refreshPage);
                     setIsSubmitted(true);
                     //alert("Successfully signed up!")
@@ -43,7 +43,7 @@ function NewStudent() {
                     }, 500);
 
                 }
-                else if (res.status == 422) {
+                else if (res.status === 422) {
                     console.log(res.error);
                 }
             });

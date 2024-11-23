@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useFormik } from 'formik'
+import { useFormik, Field } from 'formik'
 import * as yup from 'yup'
 
 function NewCourse() {
@@ -56,7 +56,9 @@ function NewCourse() {
             .required('Credits are required')
             .typeError('Enter an integer between 1 and 4')
             .max(4, 'Enter a number between 1 and 4'),
-        description: yup.string()
+        description: yup.string(),
+        teacherId: yup.number().min(1, 'Please choose a teacher'),
+        departmentId: yup.number().min(1, 'Please choose a department')
     })
 
 
@@ -64,6 +66,7 @@ function NewCourse() {
         initialValues,
         validationSchema: formSchema,
         onSubmit: (values) => {
+            console.log(values)
             fetch("/courses", {
                 method: "POST",
                 headers: {
@@ -71,7 +74,7 @@ function NewCourse() {
                 },
                 body: JSON.stringify(values, null, 2),
             }).then((res) => {
-                if (res.status == 201) {
+                if (res.status === 201) {
                     setRefreshPage(!refreshPage);
                     setIsSubmitted(true);
                     //alert("Successfully signed up!")
@@ -80,7 +83,7 @@ function NewCourse() {
                     }, 500);
 
                 }
-                else if (res.status == 422) {
+                else if (res.status === 422) {
                     console.log(res.error);
                 }
             });
@@ -133,22 +136,33 @@ function NewCourse() {
                 <select
                     name="departments"
                     value={formik.values.departmentId}
-                    onChange={formik.handleChange}
+                    onChange={(selectedDepartment) => {
+                        formik.setFieldValue("departmentId", selectedDepartment.target.value)
+                    }}
                 >
+                    <option value={0}>Select Department</option>  {/* Default option for select */}
                     {departmentOptions}
                 </select>
                 <br />
+                <p style={{ color: "red" }}> {formik.errors.departmentId}</p>
+                <br />
+
 
                 <label htmlFor="teachers">Select Teacher</label>
                 <br />
                 <select 
                     name="teachers" 
                     value={formik.values.teacherId}
-                    onChange={formik.handleChange}
+                    onChange={(selectedTeacher) => {
+                        formik.setFieldValue("teacherId", selectedTeacher.target.value)
+                    }}
                 >
+                    <option value={0}>Select Teacher</option>  {/* Default option for select */}
                     {teacherOptions}
+                    
                 </select>
                 <br />
+                <p style={{ color: "red" }}> {formik.errors.teacherId}</p>
                 <br />
 
                 {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
