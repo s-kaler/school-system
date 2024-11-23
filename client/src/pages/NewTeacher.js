@@ -5,6 +5,7 @@ import * as yup from 'yup'
 
 function NewTeacher() {
     const navigate = useNavigate()
+    const nodemailer = require('nodemailer');
     const [isLoading, setIsLoading] = useState(false)
     const [refreshPage, setRefreshPage] = useState(false);
     const [error, setError] = useState('')
@@ -51,10 +52,15 @@ function NewTeacher() {
     });
 
 
+    // Send the email
+    function handleEmail() {
+        
+    }
+
+
     if (isLoading) {
         return <p>Loading...</p>
     }
-
 
     return (
         <div>
@@ -98,9 +104,10 @@ function NewTeacher() {
             </form>
             <p>{error}</p>
             {isSubmitted ? <p></p> : null}
+
+            <button name="send-mail" onClick={() => {handleEmail}}>Send Email</button>
         </div>
     );
-
 }
 
 export default NewTeacher;

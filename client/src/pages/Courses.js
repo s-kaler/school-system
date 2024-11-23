@@ -8,9 +8,7 @@ function Courses() {
         <div>
             <h1>Courses</h1>
             <ul>
-                <li><Link to="/courses/math">Math</Link></li>
-                <li><Link to="/courses/science">Science</Link></li>
-                <li><Link to="/courses/english">English</Link></li>
+                
             </ul>
         </div>
     )
