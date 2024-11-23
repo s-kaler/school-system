@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
         db.session.commit()
 
-        #Generate departements
+        #Generate departments
         d1 = Department(name='Math')
         db.session.add(d1)
         d2 = Department(name='Science')

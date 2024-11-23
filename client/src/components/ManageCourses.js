@@ -16,7 +16,7 @@ function ManageCourses() {
 
     const mappedCourses = courses.map(course => (
         <li key={course.id}>
-            {course.name} - {course.description}
+            {course.name} - {course.description} 
         </li>
     ))
     if (isLoading) {
@@ -24,7 +24,7 @@ function ManageCourses() {
     }
     return (
         <div>
-            <h1>Manage Courses</h1>
+            <h3>Manage Courses</h3>
             <ul>
                 {mappedCourses}
             </ul>

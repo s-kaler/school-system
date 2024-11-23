@@ -6,6 +6,7 @@ import * as yup from 'yup'
 function NewStudent() {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
+    const [refreshPage, setRefreshPage] = useState(false);
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -15,38 +16,48 @@ function NewStudent() {
         email: ''
     }
 
-    const validationSchema = yup.object({
+    const formSchema = yup.object({
         firstName: yup.string().required('First name is required'),
         lastName: yup.string().required('Last name is required'),
         email: yup.string().email('Invalid email format').required('Email is required')
     })
+    
 
     const formik = useFormik({
         initialValues,
-        validationSchema,
-        onSubmit: async (values) => {
-            setIsLoading(true)
-            try {
-                await fetch('/students', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(values)
-                })
-                navigate('/students')
-            } catch (error) {
-                setError('Error creating new student')
-            } finally {
-                setIsLoading(false)
-            }
-        }
-    })
+        validationSchema: formSchema,
+        onSubmit: (values) => {
+            fetch("/students", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values, null, 2),
+            }).then((res) => {
+                if (res.status == 201) {
+                    setRefreshPage(!refreshPage);
+                    setIsSubmitted(true);
+                    //alert("Successfully signed up!")
+                    const interval = setTimeout(() => {
+                        navigate("/dashboard");
+                    }, 500);
 
+                }
+                else if (res.status == 422) {
+                    console.log(res.error);
+                }
+            });
+        },
+    });
+
+
+    if (isLoading) {
+        return <p>Loading...</p>
+    }
 
     return (
         <div>
-            <h1>Sign Up</h1>
+            <h1>Create New Student Account</h1>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="first-name">First Name</label>
                 <br />
@@ -59,7 +70,8 @@ function NewStudent() {
                 <p style={{ color: "red" }}> {formik.errors.firstName}</p>
                 <br />
 
-                <label htmlFor="last-name">LastName</label>
+                <label htmlFor="last-name">Last Name</label>
+                <br />
                 <input
                     id="last-name"
                     name="last-name"
@@ -89,3 +101,5 @@ function NewStudent() {
     );
 
 }
+
+export default NewStudent;

@@ -33,6 +33,14 @@ const routes = [
             {
                 path: '/courses/new',
                 element: <NewCourse />
+            },
+            {
+                path: '/teachers/new',
+                element: <NewTeacher />
+            },
+            {
+                path: '/students/new',
+                element: <NewStudent />
             }
         ]
     }

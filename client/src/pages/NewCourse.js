@@ -8,11 +8,44 @@ function NewCourse() {
     const [error, setError] = useState('')
     const [refreshPage, setRefreshPage] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [teachers, setTeachers] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("/teachers")
+        .then((res) => res.json())
+        .then((data) => {setTeachers(data)})
+        fetch("/departments")
+        .then(res => res.json())
+        .then((data) => {
+            setDepartments(data)
+            setIsLoading(false)
+        })
+    }, [])
+
+    let teacherOptions =  []
+
+    if (teachers) {
+        teacherOptions = teachers.map((teacher) => {
+            return <option key={teacher.id} value={teacher.id}>{teacher.first_name} {teacher.last_name}</option>
+        })
+    }
+
+    let departmentOptions = []
+
+    if (departments) {
+        departmentOptions  = departments.map((department) => {
+            return <option key={department.id} value={department.id}>{department.name}</option>
+        })
+    }
 
     const initialValues = {
         name: '',
         credits: 0,
         description: '',
+        teacherId: 0,
+        departmentId: 0,
     }
 
     const formSchema = yup.object({
@@ -25,30 +58,6 @@ function NewCourse() {
             .max(4, 'Enter a number between 1 and 4'),
         description: yup.string()
     })
-
-    /*
-    const formik = useFormik({
-        initialValues,
-        validationSchema,
-        onSubmit: async (values) => {
-            setIsLoading(true)
-            try {
-                await fetch('/courses', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(values)
-                })
-                navigate('/courses')
-            } catch (error) {
-                setError('Error creating new course')
-            } finally {
-                setIsLoading(false)
-            }
-        }
-    })
-    */
 
 
     const formik = useFormik({
@@ -67,7 +76,7 @@ function NewCourse() {
                     setIsSubmitted(true);
                     //alert("Successfully signed up!")
                     const interval = setTimeout(() => {
-                        navigate("/courses");
+                        navigate("/dashboard");
                     }, 500);
 
                 }
@@ -78,10 +87,13 @@ function NewCourse() {
         },
     });
 
+    if(isLoading) {
+        return <p>Loading...</p>
+    }
 
     return (
         <div>
-            <h1>Sign Up</h1>
+            <h1>Create New Course</h1>
             <form onSubmit={formik.handleSubmit}>
                 <label htmlFor="name">Name</label>
                 <br />
@@ -107,7 +119,7 @@ function NewCourse() {
 
                 <label htmlFor="description">Description</label>
                 <br />
-                <input
+                <textarea
                     id="description"
                     name="description"
                     onChange={formik.handleChange}
@@ -116,7 +128,28 @@ function NewCourse() {
                 <p style={{ color: "red" }}> {formik.errors.description}</p>
                 <br />
 
-                
+                <label htmlFor="departments">Select Department</label>
+                <br />
+                <select
+                    name="departments"
+                    value={formik.values.departmentId}
+                    onChange={formik.handleChange}
+                >
+                    {departmentOptions}
+                </select>
+                <br />
+
+                <label htmlFor="teachers">Select Teacher</label>
+                <br />
+                <select 
+                    name="teachers" 
+                    value={formik.values.teacherId}
+                    onChange={formik.handleChange}
+                >
+                    {teacherOptions}
+                </select>
+                <br />
+                <br />
 
                 {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
 

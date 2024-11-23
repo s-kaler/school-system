@@ -78,6 +78,7 @@ class Course(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     credits = db.Column(db.Integer)
+    description = db.Column(db.String)
 
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)
     department = db.relationship('Department', back_populates='courses')

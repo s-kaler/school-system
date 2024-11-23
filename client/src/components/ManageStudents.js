@@ -25,7 +25,7 @@ function ManageStudents() {
     }
     return (
         <div>
-            <h1>Manage Students</h1>
+            <h3>Manage Students</h3>
             <ul>
                 {mappedStudents}
             </ul>

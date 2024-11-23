@@ -86,6 +86,30 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 
+class Departments(Resource):
+    def get(self):
+        departments = Department.query.all()
+        return [department.to_dict() for department in departments]
+    
+    def post(self):
+        json = request.get_json()
+        if 'name' not in json :
+            return {'error': 'Missing required field'}, 422
+        
+        department = Department(name=json['name'])
+
+        try:
+            db.session.add(department)
+            db.session.commit()
+            return department.to_dict(), 201
+        except Exception as err:
+            session.rollback()
+            if "UNIQUE constraint failed: courses.name" in str(err):
+                return {'error': 'Course name already exists'}, 422
+
+api.add_resource(Departments, '/departments', endpoint='departments')
+
+
 class Courses(Resource):
     def get(self):
         courses = Course.query.all()
@@ -93,10 +117,12 @@ class Courses(Resource):
     
     def post(self):
         json = request.get_json()
-        if 'name' not in json:
+        if 'name' not in json or 'credits' not in json or 'teacherId' not in json or 'departmentId' not in json:
             return {'error': 'Missing required field'}, 422
         
-        course = Course(name=json['name'])
+        course = Course(name=json['name'], credits=json['credits'], teacher_id=json['teacherId'], department_id=json['departmentId'])
+        if 'description' in json:
+            course.description = json['description']
 
         try:
             db.session.add(course)
