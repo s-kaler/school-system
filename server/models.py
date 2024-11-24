@@ -44,6 +44,7 @@ class Admin(User):
 class Teacher(User):
     __tablename__ = 'teachers'
     __mapper_args__ = {'polymorphic_identity': 'teacher'}
+    serialize_rules=('-department.teachers', '-department.courses', '-courses.assignments', '-courses.teacher_id', '-courses.teacher', '-courses.department_id', '-courses.department', '-courses.course_enrollments', '-courses.description')
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     rating = db.Column(db.Integer)
     

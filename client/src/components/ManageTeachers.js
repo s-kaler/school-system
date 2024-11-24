@@ -14,9 +14,31 @@ function ManageTeachers() {
             })
     }, [])
 
+
+    function handleEmail(teacher) {
+        console.log(teacher);
+        let fullName = `${teacher.first_name} ${teacher.last_name}`;
+        fetch('/email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: fullName,
+                email: teacher.email,
+                userId: teacher.id,
+            }),
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
+
+    }
+
     const mappedTeachers = teachers.map(teacher => (
         <li key={teacher.id}>
             {teacher.first_name} {teacher.last_name}
+            {teacher.verified ? <></> : <button onClick={() => handleEmail(teacher)}>Send Verification Email</button> }
+           
         </li>
     ))
     if (isLoading) {

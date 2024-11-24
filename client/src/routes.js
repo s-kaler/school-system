@@ -41,6 +41,10 @@ const routes = [
             {
                 path: '/students/new',
                 element: <NewStudent />
+            },
+            {
+                path: '/verify/:id',
+                element: <Verify />
             }
         ]
     }

@@ -32,14 +32,6 @@ if __name__ == '__main__':
         s1.password_hash = 'georgejeff'
         db.session.add(s1)
 
-        t1 = Teacher(first_name='Bob', last_name='Jefferson', email='bobjeff@gmail.com', verified=True)
-        t1.password_hash = 'bobjeff'
-        db.session.add(t1)
-        t2 = Teacher(first_name='Anna', last_name='Wellington', email='annawell@gmail.com', verified=True)
-        t2.password_hash = 'annawell'
-        db.session.add(t2)
-
-        db.session.commit()
 
         #Generate departments
         d1 = Department(name='Math')
@@ -48,6 +40,14 @@ if __name__ == '__main__':
         db.session.add(d2)
         db.session.commit()
 
+        t1 = Teacher(first_name='Bob', last_name='Jefferson', email='bobjeff@gmail.com', verified=True, department_id=d1.id)
+        t1.password_hash = 'bobjeff'
+        db.session.add(t1)
+        t2 = Teacher(first_name='Anna', last_name='Wellington', email='annawell@gmail.com', verified=True, department_id=d2.id)
+        t2.password_hash = 'annawell'
+        db.session.add(t2)
+
+        db.session.commit()
         #Generate courses
 
         c1 = Course(name='Biology 101', credits='4', department_id=d2.id, teacher_id=t1.id)

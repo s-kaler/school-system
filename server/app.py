@@ -278,14 +278,20 @@ class Email(Resource):
             return {'error': 'Missing required field'}, 422
         
         recipient = json['email']
-        send_email(recipient)
+        user_id = json['userId']
+        name = json['name']
+        user_type = json['userType']
+        send_email(recipient, user_id, name, user_type)
         return {'message': 'Email sent successfully'}
 
 api.add_resource(Email, '/email', endpoint='email')
 
-def send_email(recipient):
+DEFAULT_URL = 'https://localhost:4000'
+
+def send_email(recipient, user_id, name, user_type):
+    url = f'{DEFAULT_URL}/verify/{user_id}'
     msg = Message('Hello', sender='skalerproject@gmail.com', recipients=[recipient])
-    msg.body = 'This is a test email.'
+    msg.body = f'Hello, {name}, your user id is {user_id}. Please verify your email: {url}'
     mail.send(msg)
     return {'message': 'Email sent successfully'}
 

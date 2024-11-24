@@ -53,6 +53,15 @@ function NewTeacher() {
             })
             .then((res) => {
                 if (res.status === 201) {
+                    res.json((data) => {
+                        //setTeachers([...teachers, data])
+                        setIsLoading(false)
+                        formik.resetForm()
+                        setDepartments([])
+                        setError('')
+                        const newTeacherId = data.id
+                        console.log(newTeacherId)
+                    })
                     setRefreshPage(!refreshPage);
                     setIsSubmitted(true);
                     setError('')
@@ -79,14 +88,17 @@ function NewTeacher() {
     }
 
     // Send the email
-    function handleEmail(recipient) {
+    function handleEmail(recipient, id) {
         console.log(recipient);
         fetch('/email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email: recipient }),
+            body: JSON.stringify({ 
+                email: recipient,
+                userId: id
+            }),
         })
         .then(res => res.json())
         .then(data => console.log(data))
