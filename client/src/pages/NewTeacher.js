@@ -79,8 +79,18 @@ function NewTeacher() {
     }
 
     // Send the email
-    function handleEmail() {
-        return null
+    function handleEmail(recipient) {
+        console.log(recipient);
+        fetch('/email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: recipient }),
+        })
+        .then(res => res.json())
+        .then(data => console.log(data))
+
     }
 
 
@@ -146,7 +156,7 @@ function NewTeacher() {
             <p>{error}</p>
             {isSubmitted ? <p></p> : null}
 
-            <button name="send-mail" onClick={() => {handleEmail()}}>Send Email</button>
+            <button name="send-mail" onClick={() => {handleEmail(formik.values.email)}}>Send Email</button>
         </div>
     );
 }
