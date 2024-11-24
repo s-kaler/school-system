@@ -14,7 +14,8 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email= db.Column(db.String, unique=True, nullable=False)
-    _password_hash = db.Column(db.String, nullable=False)
+    verified = db.Column(db.Boolean, default=False)
+    _password_hash = db.Column(db.String)
     user_type = db.Column(db.String, nullable=False)
     __mapper_args__ = {'polymorphic_on': user_type}
 

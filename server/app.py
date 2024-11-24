@@ -41,7 +41,7 @@ class Signup(Resource):
             #session['user_id'] = user.id
             return user.to_dict(), 201
         except Exception as err:
-            session.rollback()
+            db.session.rollback()
             if "UNIQUE constraint failed: user.user" in str(err):
                 return {'error': 'Username already exists'}, 422
             elif "UNIQUE constraint failed: user.email" in str(err):
@@ -104,7 +104,7 @@ class Departments(Resource):
             db.session.commit()
             return department.to_dict(), 201
         except Exception as err:
-            session.rollback()
+            db.session.rollback()
             if "UNIQUE constraint failed: courses.name" in str(err):
                 return {'error': 'Course name already exists'}, 422
 
@@ -130,7 +130,7 @@ class Courses(Resource):
             db.session.commit()
             return course.to_dict(), 201
         except Exception as err:
-            session.rollback()
+            db.session.rollback()
             if "UNIQUE constraint failed: courses.name" in str(err):
                 return {'error': 'Course name already exists'}, 422
             
@@ -178,25 +178,26 @@ class Teachers(Resource):
     
     def post(self):
         json = request.get_json()
-        if 'first_name' not in json or 'last_name' not in json or 'email' not in json or 'password' not in json or 'department_id' not in json:
+        if 'firstName' not in json or 'lastName' not in json or 'email' not in json or 'password' not in json or 'departmentId' not in json:
             return {'error': 'Missing required fields'}, 422
         
         teacher = Teacher(
             first_name=json['firstName'],
             last_name=json['lastName'],
             email=json['email'],
-            department_id=json['department_id']
+            department_id=json['departmentId'],
+            verified=False
         )
-        teacher.password_hash = json['password']
 
         try:
             db.session.add(teacher)
             db.session.commit()
             return teacher.to_dict(), 201
         except Exception as err:
-            session.rollback()
-            if "UNIQUE constraint failed: teachers.email" in str(err):
+            db.session.rollback()
+            if "UNIQUE constraint failed: users.email" in str(err):
                 return {'error': 'Email already exists'}, 422
+            return {'error': str(err)}, 422
 
 api.add_resource(Teachers, '/teachers', endpoint='teachers')
 
@@ -246,24 +247,24 @@ class Students(Resource):
     
     def post(self):
         json = request.get_json()
-        if 'first_name' not in json or 'last_name' not in json or 'email' not in json or 'password' not in json or 'department_id' not in json:
+        if 'firstName' not in json or 'lastName' not in json or 'email' not in json or 'password' not in json:
             return {'error': 'Missing required fields'}, 422
         
         student = Student(
-            first_name=json['first_name'],
-            last_name=json['last_name'],
+            first_name=json['firstName'],
+            last_name=json['lastName'],
             email=json['email'],
-            department_id=json['department_id']
+
+            verified=False
         )
-        student.password_hash = json['password']
 
         try:
             db.session.add(student)
             db.session.commit()
             return student.to_dict(), 201
         except Exception as err:
-            session.rollback()
-            if "UNIQUE constraint failed: students.email" in str(err):
+            db.session.rollback()
+            if "UNIQUE constraint failed: users.email" in str(err):
                 return {'error': 'Email already exists'}, 422
     
 api.add_resource(Students, '/students', endpoint='students')

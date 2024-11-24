@@ -31,37 +31,42 @@ function NewTeacher() {
         password: '',
         departmentId: 0,
     }
+
     const formSchema = yup.object({
         firstName: yup.string().required('First name is required'),
         lastName: yup.string().required('Last name is required'),
-        email: yup.string().email('Invalid email format').required('Email is required')
+        email: yup.string().email('Invalid email format').required('Email is required'),
+        departmentId: yup.number().min(1, 'Please select a department')
     })
-
 
     const formik = useFormik({
         initialValues,
         validationSchema: formSchema,
         onSubmit: (values) => {
-            console.log(values)
+            //console.log(values)
             fetch("/teachers", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(values, null, 2),
-            }).then((res) => {
+            })
+            .then((res) => {
                 if (res.status === 201) {
                     setRefreshPage(!refreshPage);
                     setIsSubmitted(true);
+                    setError('')
                     //alert("Successfully signed up!")
                     const interval = setTimeout(() => {
                         navigate("/dashboard");
                     }, 500);
                 }
                 else if (res.status === 422) {
-                    console.log(res.error);
+                    res.json().then((data) => {
+                        setError(data.error)
+                    })
                 }
-            });
+            })
         },
     });
 
@@ -124,10 +129,15 @@ function NewTeacher() {
                 <select
                     name="departments"
                     value={formik.values.departmentId}
-                    onChange={formik.handleChange}
+                    onChange={(selectedDepartment) => {
+                        formik.setFieldValue("departmentId", selectedDepartment.target.value)
+                    }}
                 >
+                    <option value={0}>Select Department</option>  {/* Default option for select */}
                     {departmentOptions}
                 </select>
+                <br />
+                <p style={{ color: "red" }}> {formik.errors.departmentId}</p>
                 <br />
 
                 {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}

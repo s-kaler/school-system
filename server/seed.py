@@ -24,18 +24,18 @@ if __name__ == '__main__':
         # Generate departments
 
         # Generate users
-        a1 = Admin(first_name='Ad', last_name='min', email='admin@school.edu')
+        a1 = Admin(first_name='Ad', last_name='min', email='admin@school.edu', verified=True)
         a1.password_hash = '123'
         db.session.add(a1)
 
-        s1 = Student(first_name='George', last_name='Jefferson', email='georgejeff@gmail.com')
+        s1 = Student(first_name='George', last_name='Jefferson', email='georgejeff@gmail.com', verified=True)
         s1.password_hash = 'georgejeff'
         db.session.add(s1)
 
-        t1 = Teacher(first_name='Bob', last_name='Jefferson', email='bobjeff@gmail.com')
+        t1 = Teacher(first_name='Bob', last_name='Jefferson', email='bobjeff@gmail.com', verified=True)
         t1.password_hash = 'bobjeff'
         db.session.add(t1)
-        t2 = Teacher(first_name='Anna', last_name='Wellington', email='annawell@gmail.com')
+        t2 = Teacher(first_name='Anna', last_name='Wellington', email='annawell@gmail.com', verified=True)
         t2.password_hash = 'annawell'
         db.session.add(t2)
 

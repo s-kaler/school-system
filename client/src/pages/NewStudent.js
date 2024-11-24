@@ -13,7 +13,8 @@ function NewStudent() {
     const initialValues = {
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
+        password: '',
     }
 
     const formSchema = yup.object({
@@ -22,7 +23,6 @@ function NewStudent() {
         email: yup.string().email('Invalid email format').required('Email is required')
     })
     
-
     const formik = useFormik({
         initialValues,
         validationSchema: formSchema,
@@ -44,12 +44,13 @@ function NewStudent() {
 
                 }
                 else if (res.status === 422) {
-                    console.log(res.error);
+                    res.json().then((data) => {
+                        setError(data.error)
+                    })
                 }
             });
         },
     });
-
 
     if (isLoading) {
         return <p>Loading...</p>
@@ -59,22 +60,22 @@ function NewStudent() {
         <div>
             <h1>Create New Student Account</h1>
             <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="first-name">First Name</label>
+                <label htmlFor="firstName">First Name</label>
                 <br />
                 <input
-                    id="first-name"
-                    name="first-name"
+                    id="firstName"
+                    name="firstName"
                     onChange={formik.handleChange}
                     value={formik.values.firstName}
                 />
                 <p style={{ color: "red" }}> {formik.errors.firstName}</p>
                 <br />
 
-                <label htmlFor="last-name">Last Name</label>
+                <label htmlFor="lastName">Last Name</label>
                 <br />
                 <input
-                    id="last-name"
-                    name="last-name"
+                    id="lastName"
+                    name="lastName"
                     onChange={formik.handleChange}
                     value={formik.values.lastName}
                 />
@@ -90,7 +91,6 @@ function NewStudent() {
                     value={formik.values.email}
                 />
                 <p style={{ color: "red" }}> {formik.errors.email}</p>
-
 
                 {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
 
