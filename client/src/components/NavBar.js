@@ -27,7 +27,7 @@ function NavBar({ user, setUser }) {
                     </>
                 )
             }
-            else if (user.user_type === "Teacher") {
+            else if (user.user_type === "teacher") {
                 //add link to teacher dashboard if user is teacher
                 return (
                     <>
@@ -35,7 +35,7 @@ function NavBar({ user, setUser }) {
                     </>
                 )
             }
-            else if (user.user_type === "Student") {
+            else if (user.user_type === "student") {
                 //add link to student dashboard if user is student
                 return (
                     <>

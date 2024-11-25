@@ -87,7 +87,6 @@ function NewTeacher() {
         })
     }
 
-
     if (isLoading) {
         return <p>Loading...</p>
     }
