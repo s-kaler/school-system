@@ -77,7 +77,7 @@ class Department(db.Model, SerializerMixin):
 
 class Course(db.Model, SerializerMixin):
     __tablename__ = 'courses'
-    serialize_rules = ('-department.courses', '-department.teachers', '-teacher.user_type', '-teacher.courses', '-teacher._password_hash', '-teacher.department','-teacher.rating', '-student.courses')
+    serialize_rules = ('-department.courses', '-department.teachers', '-department.id', '-teacher.user_type', '-teacher.courses', '-teacher._password_hash', '-teacher.department','-teacher.rating', '-teacher.verification_code', '-teacher.verified', '-teacher.id', '-teacher.department_id', '-student.courses')
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     credits = db.Column(db.Integer)

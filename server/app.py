@@ -321,6 +321,7 @@ class UserById(Resource):
         
 api.add_resource(UserById, '/users/<int:user_id>', endpoint='user_by_id')
 
+
 DEFAULT_URL = 'localhost:4000'
 
 def send_email(user):
@@ -338,6 +339,17 @@ def generate_token():
     token = random.randint(0, 9999)
     token_str = f"{token:04d}"
     return token_str
+
+
+class CoursesByTeacher(Resource):
+    def get(self, teacher_id):
+        courses = Course.query.filter(Course.teacher_id == teacher_id).all()
+        if not courses:
+            return {'error': 'No courses found for this teacher'}, 404
+        course_dict_list = [course.to_dict() for course in courses]
+        return make_response(course_dict_list, 200)
+    
+api.add_resource(CoursesByTeacher, '/teachers/<int:teacher_id>/courses')
 
 
 if __name__ == '__main__':

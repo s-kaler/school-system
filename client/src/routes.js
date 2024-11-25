@@ -7,6 +7,7 @@ import NewStudent from './pages/NewStudent';
 import NewCourse from './pages/NewCourse';
 import NewTeacher from './pages/NewTeacher';
 import Verify from './pages/Verify';
+import CoursePage from './pages/CoursePage';
 
 
 const routes = [
@@ -45,6 +46,10 @@ const routes = [
             {
                 path: '/verify/:userId',
                 element: <Verify />
+            },
+            {
+                path: '/courses/:courseId',
+                element: <CoursePage />
             }
         ]
     }

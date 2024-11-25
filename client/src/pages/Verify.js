@@ -108,8 +108,6 @@ function Verify(){
         )
     }
 
-
-
     const detailsSchema = yup.object({
         firstName: yup.string().required('First Name is required'),
         lastName: yup.string().required('Last Name is required'),

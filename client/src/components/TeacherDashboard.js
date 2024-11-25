@@ -1,13 +1,35 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 
-function TeacherDashboard() {
+function TeacherDashboard({teacher}) {
+    const [courses, setCourses] = useState([])
+    const [isLoading, setLoading] = useState(true)
+    useEffect(() => {
+        fetch(`/teachers/${teacher.id}/courses`)
+           .then(response => response.json())
+           .then((data) => {
+                setCourses(data)
+                setLoading(false)
+            })
+    }, [teacher.id])
+
+    const mappedCourses = courses.map(course => (
+        <li key={course.id}>{course.name} - {course.description}</li>
+    ))
+
+    if (isLoading) {
+        return <p>Loading...</p>
+    }
+
     return (
         <div>
-            <h1>Teacher Dashboard</h1>
-            <p>Welcome, Teacher!</p>
+            <h2>Teacher Controls</h2>
+            <p>Courses:</p>
+            <ul className="courses-list">
+                {mappedCourses}
+            </ul>
         </div>
     )
 }
 
-export default TeacherDashboard;
+export default TeacherDashboard; 
