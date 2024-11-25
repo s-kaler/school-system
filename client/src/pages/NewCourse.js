@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useFormik, Field } from 'formik'
+import { useFormik } from 'formik'
 import * as yup from 'yup'
 
 function NewCourse() {

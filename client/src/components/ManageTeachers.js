@@ -27,6 +27,7 @@ function ManageTeachers() {
                 name: fullName,
                 email: teacher.email,
                 userId: teacher.id,
+                userType: teacher.userType,
             }),
         })
             .then(res => res.json())

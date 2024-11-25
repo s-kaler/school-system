@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_mail import Message
 from config import mail
+import random
 
 # Local imports
 from config import app, db, api
@@ -52,9 +53,10 @@ class CheckSession(Resource):
     def get(self):
         
         #user_id = session['user_id']
-        user = User.query.filter(User.id == session['user_id']).first()
-        if user:
-            return user.to_dict(), 200
+        if 'user_id'  in session:
+            user = User.query.filter(User.id == session['user_id']).first()
+            if user:
+                return user.to_dict(), 200
         
         return {}, 401
 
@@ -187,12 +189,14 @@ class Teachers(Resource):
             last_name=json['lastName'],
             email=json['email'],
             department_id=json['departmentId'],
-            verified=False
+            verified=False,
+            verification_code=generate_token()
         )
 
         try:
             db.session.add(teacher)
             db.session.commit()
+            send_email(teacher)
             return teacher.to_dict(), 201
         except Exception as err:
             db.session.rollback()
@@ -255,12 +259,13 @@ class Students(Resource):
             first_name=json['firstName'],
             last_name=json['lastName'],
             email=json['email'],
-
-            verified=False
+            verified=False,
+            verification_code=generate_token()
         )
 
         try:
             db.session.add(student)
+            send_email(student)
             db.session.commit()
             return student.to_dict(), 201
         except Exception as err:
@@ -286,14 +291,53 @@ class Email(Resource):
 
 api.add_resource(Email, '/email', endpoint='email')
 
-DEFAULT_URL = 'https://localhost:4000'
+class UserById(Resource):
+    def get(self, user_id):
+        user = User.query.filter(User.id == user_id).first()
+        if user:
+            return user.to_dict()
+        else:
+            return {'error': 'User not found'}, 404
+        
+    def patch(self, user_id):
+        user = User.query.filter(User.id == user_id).first()
+        if user:
+            json = request.get_json()
+            if 'first_name' in json:
+                user.first_name = json['firstName']
+            if 'last_name' in json:
+                user.last_name = json['lastName']
+            if 'email' in json:
+                user.email = json['email']
+            if 'password' in json:
+                user.password_hash = json['password']
+            if 'verified' in json:
+                user.verified = json['verified']
 
-def send_email(recipient, user_id, name, user_type):
-    url = f'{DEFAULT_URL}/verify/{user_id}'
-    msg = Message('Hello', sender='skalerproject@gmail.com', recipients=[recipient])
-    msg.body = f'Hello, {name}, your user id is {user_id}. Please verify your email: {url}'
+            db.session.commit()
+            return user.to_dict()
+        else:
+            return {'error': 'User not found'}, 404
+        
+api.add_resource(UserById, '/users/<int:user_id>', endpoint='user_by_id')
+
+DEFAULT_URL = 'localhost:4000'
+
+def send_email(user):
+    recipient = user.email
+    name = f"{user.first_name} {user.last_name}"
+    token = f"{user.verification_code}"
+
+    url = f'{DEFAULT_URL}/verify/{user.id}'
+    msg = Message('Set up your account', sender='skalerproject@gmail.com', recipients=[recipient])
+    msg.body = f'Hello, {name}, your verification code is {token}.\nPlease verify your account to finish setup: {url}'
     mail.send(msg)
     return {'message': 'Email sent successfully'}
+
+def generate_token():
+    token = random.randint(0, 9999)
+    token_str = f"{token:04d}"
+    return token_str
 
 
 if __name__ == '__main__':
