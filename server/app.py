@@ -352,5 +352,82 @@ class CoursesByTeacher(Resource):
 api.add_resource(CoursesByTeacher, '/teachers/<int:teacher_id>/courses')
 
 
+class Assignments(Resource):
+    def get(self):
+        assignments = Assignment.query.all()
+        return [assignment.to_dict() for assignment in assignments]
+    
+    def post(self):
+        json = request.get_json()
+        if 'courseId' not in json or 'name' not in json or 'description' not in json:
+            return {'error': 'Missing required fields'}, 422
+        
+        assignment = Assignment(
+            course_id=json['courseId'],
+            name=json['name'],
+            description=json['description'],
+            published=False
+        )
+
+        db.session.add(assignment)
+        db.session.commit()
+        return assignment.to_dict(), 201
+    
+api.add_resource(Assignments, '/assignments')
+
+
+class AssignmentById(Resource):
+    def get(self, assignment_id):
+        assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+        if assignment:
+            return assignment.to_dict()
+        else:
+            return {'error': 'Assignment not found'}, 404
+        
+    def patch(self, assignment_id):
+        assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+        if assignment:
+            json = request.get_json()
+            if 'name' in json:
+                assignment.name = json['name']
+            if 'description' in json:
+                assignment.description = json['description']
+            if 'published' in json:
+                assignment.published = json['published']
+                if assignment.published:
+                    assignment.due_date = json['due_date']
+                else:
+                    assignment.due_date = None
+                
+
+            db.session.commit()
+            return assignment.to_dict()
+        else:
+            return {'error': 'Assignment not found'}, 404
+        
+    def delete(self, assignment_id):
+        assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+        if assignment:
+            db.session.delete(assignment)
+            db.session.commit()
+            return {}, 204
+        else:
+            return {'error': 'Assignment not found'}, 404
+        
+api.add_resource(AssignmentById, '/assignments/<int:assignment_id>')
+
+class AssignmentsByCourse(Resource):
+    def get(self, course_id):
+        assignments = Assignment.query.filter(Assignment.course_id == course_id).all()
+        if not assignments:
+            return {'error': 'No assignments found for this course'}, 404
+        assignment_dict_list = [assignment.to_dict() for assignment in assignments]
+        return make_response(assignment_dict_list, 200)
+    
+
+api.add_resource(AssignmentsByCourse, '/courses/<int:course_id>/assignments')
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

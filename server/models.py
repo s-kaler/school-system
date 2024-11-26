@@ -96,7 +96,7 @@ class Course(db.Model, SerializerMixin):
 
 
 #students to courses
-class CourseEnrollment(db.Model):
+class CourseEnrollment(db.Model, SerializerMixin):
     __tablename__ = 'course_enrollments'
     id = db.Column(db.Integer, primary_key=True)
     enrollment_date = db.Column(db.DateTime)
@@ -112,8 +112,9 @@ class CourseEnrollment(db.Model):
     assignments = association_proxy('submissions', 'assignment', creator=lambda assignment_obj: Submission(assignment=assignment_obj))
 
 
-class Assignment(db.Model):
+class Assignment(db.Model, SerializerMixin):
     __tablename__ = 'assignments'
+    serialize_rules = ('-course.assignments', '-course.course_enrollments', '-course.id', '-course.students', '-course.credits', '-course.submissions.course')
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
@@ -128,8 +129,9 @@ class Assignment(db.Model):
     course_enrollments = association_proxy('submissions', 'course_enrollment', creator=lambda enrollment_obj:  Submission(course_enrollment=enrollment_obj))
 
 #enrollments to assignments
-class Submission(db.Model):
+class Submission(db.Model, SerializerMixin):
     __tablename__ = 'submissions'
+    serialize_rules = ('-course_enrollment.submissions', '-assignment.submissions', '-course_enrollment.id', '-course_enrollment.student','-course_enrollment.course','-assignment.course','-assignment.course_enrollments','-assignment.id','-assignment.name','-assignment.description','-assignment.published','-assignment.published_at','-assignment.due_date','-assignment.course_id','-assignment.course')
     id = db.Column(db.Integer, primary_key=True)
     file_path = db.Column(db.String)
     submitted_at = db.Column(db.DateTime)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 function TeacherDashboard({teacher}) {
     const [courses, setCourses] = useState([])
@@ -14,7 +14,7 @@ function TeacherDashboard({teacher}) {
     }, [teacher.id])
 
     const mappedCourses = courses.map(course => (
-        <li key={course.id}>{course.name} - {course.description}</li>
+        <li key={course.id}><Link to={`/courses/${course.id}`}>{course.name}</Link> - {course.description}</li>
     ))
 
     if (isLoading) {
