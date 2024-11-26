@@ -266,8 +266,8 @@ class Students(Resource):
 
         try:
             db.session.add(student)
-            send_email(student)
             db.session.commit()
+            send_email(student)
             return student.to_dict(), 201
         except Exception as err:
             db.session.rollback()

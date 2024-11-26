@@ -14,17 +14,19 @@ function CoursePage() {
         .then(response => response.json())
         .then(data => {
             //console.log(user)
-            setCourse(data)
             //console.log(data)
-            if (data.assignments.length > 0) {
-                fetch(`/courses/${params.courseId}/assignments`)
-                .then(response => response.json())
-                .then(data => {
-                    //console.log(data)
-                    setIsLoading(false)
-                    setAssignments(data)
-                })
-            }  
+            if (data.assignments) {
+                setCourse(data)
+                if (data.assignments.length > 0) {
+                    fetch(`/courses/${params.courseId}/assignments`)
+                    .then(response => response.json())
+                    .then(data => {
+                        //console.log(data)
+                        setIsLoading(false)
+                        setAssignments(data)
+                    })
+                }  
+            }
         })
         
         
@@ -36,40 +38,55 @@ function CoursePage() {
 
     if (isLoading) {<p>Loading...</p>}
     else {
-        if (user) {
-            if (user.id === course.teacher_id) {
-                if (assignments.length === 0) {
-                    //console.log(assignments)
-                    mappedAssignments = <li key="no-assignments">No assignments found.</li>
-                }
-                else {
-                    mappedAssignments = assignments.map((assignment) => {
-                        return <li key={assignment.id}>
-                            <Link to={`/assignments/${assignment.id}`}>{assignment.name}</Link> - Due: {assignment.due_date}
-                        </li>
-                    })
-                }
-            }
-            if (user.user_type === 'student') {
-
-            }
+        if (assignments.length === 0) {
+            //console.log(assignments)
+            mappedAssignments = <li key="no-assignments">No assignments found.</li>
+        }
+        else {
+            mappedAssignments = assignments.map((assignment) => {
+                return <li key={assignment.id}>
+                    <Link to={`/assignments/${assignment.id}`}>{assignment.name}</Link> - Due: {assignment.due_date}
+                    <p>Published: {assignment.published ? 'Yes' : 'No'}</p>
+                </li>
+            })
         }
     }
-    
-    if(course) {
+
+    if (course) {
+        if (isLoading) { <p>Loading...</p> }
         if (user) {
             return (
                 <div>
                     <h1>{course.name}</h1>
                     <p>Description: <br />{course.description}</p>
-                    <h3>Assignments:</h3>
-                    <ul>
-                        {mappedAssignments}
-                    </ul>
-                    {user.id === course.teacher_id ? <button onClick={() => navigate(`/courses/${course.id}/newassignment`)}>Create Assignment</button> : <></>}
+                    <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
+                    {assignments.length > 0  ? 
+                        <div>
+                            <h3>Assignments:</h3>
+                            <ul>
+                                {mappedAssignments}
+                            </ul>
+                        </div>
+                        :
+                        <p>No assignments found.</p>
+                    }
+                    
+                    {user.id === course.teacher_id ?
+                    <button onClick={() => navigate(`/courses/${course.id}/newassignment`)}>Create Assignment</button>
+                    :
+                    <></>}
                 </div>
-            )
+                )
         }
+        else {
+            <div>
+                <h1>{course.name}</h1>
+                <p>Description: <br />{course.description}</p>
+            </div>
+        }
+    }
+    else {
+        return <p>Course not found.</p>
     }
 }
 

@@ -14,11 +14,22 @@ function ManageCourses() {
             })
     }, [])
 
+    function handleEdit(course) {
+
+    }
+
+
     const mappedCourses = courses.map(course => (
         <li key={course.id}>
-            {course.name} - {course.description} 
+            <Link to={`/courses/${course.id}`}>{course.name}</Link> - {course.description}
+            <br/>
+            Taught by {course.teacher.first_name} {course.teacher.last_name}
+            <br />
+            <button onClick={() => handleEdit(course)}>Edit</button>
         </li>
     ))
+
+
     if (isLoading) {
         return <p>Loading...</p>
     }

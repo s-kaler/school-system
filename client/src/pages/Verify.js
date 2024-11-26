@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import {Formik, useFormik} from 'formik'
 import * as yup from 'yup'
 
 function Verify(){
     const params = useParams()
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useOutletContext()
+    const [newUser, setNewUser] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [refreshPage, setRefreshPage] = useState(false);
@@ -17,25 +18,28 @@ function Verify(){
         password: '',
         confirmPassword: '',
     });
+    const navigate = useNavigate()
 
     useEffect(() => {
         setIsLoading(true)
         fetch(`/users/${params.userId}`)
            .then((response) => response.json())
            .then((data) => {
-               setUser(data)
-               setInitialDetails({
-                   firstName: user['first_name'],
-                   lastName: user['last_name'],
-                   verified: true,
-                   password: '',
-                   confirmPassword: '',
-               })
+                if (!data.verified) {
+                    setUser(null)
+                }
+                setNewUser(data)
+                setInitialDetails({
+                    firstName: newUser['first_name'],
+                    lastName: newUser['last_name'],
+                    verified: true,
+                    password: '',
+                    confirmPassword: '',
+                })
                 setIsLoading(false)
                 console.log(data)
             })
            .catch((error) => {
-                setError(error.message)
                 setIsLoading(false)
             })
     }, [])
@@ -57,11 +61,11 @@ function Verify(){
         validationSchema: tokenSchema,
         onSubmit: (values) => {
             //console.log(values)
-            if (values.token === user['verification_code']) {
+            if (values.token === newUser['verification_code']) {
                 //setIsLoading(true)
                 setInitialDetails({
-                    firstName: user['first_name'],
-                    lastName: user['last_name'],
+                    firstName: newUser['first_name'],
+                    lastName: newUser['last_name'],
                     verified: true,
                     password: '',
                     confirmPassword: '',
@@ -73,6 +77,7 @@ function Verify(){
             else {
                 setIsLoading(false)
                 console.log('Invalid Verification Code')
+                setError('Invalid Verification Code')
             }
         }
     })
@@ -103,6 +108,7 @@ function Verify(){
                     <p style={{ color: "red" }}> {tokenFormik.errors.token}</p>
                     <br />
                     <button type="submit">Verify</button>
+                    <p>{error}</p>
                 </form>
             </div>
         )
@@ -130,10 +136,11 @@ function Verify(){
             })
             .then((res) => res.json())
             .then((data) => {
-                //setUser(data)
+                //setNewUser(data)
                 //setRefreshPage(!refreshPage)
                 console.log(data)
                 setIsLoading(true)
+                navigate(`/`)
             })
     }
     })
@@ -202,10 +209,17 @@ function Verify(){
 
     if (isLoading) { return <p>Loading...</p> }
     else {
-        if (user){
+        if (newUser){
+            if(newUser.verified) {
+                return (
+                    <div>
+                        <p>User already verified.</p>
+                    </div>
+                )
+            }
             return (
                 <div>
-                    {isVerified ? showDetailsForm(user.email) : showVerification(user.email)}
+                    {isVerified ? showDetailsForm(newUser.email) : showVerification(newUser.email)}
                 </div>
             )
         }
