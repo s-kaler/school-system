@@ -10,9 +10,9 @@ function Home() {
                 This is about the school.
             </p>
             <ul>
-                <li><Link to="/about">About</Link></li>
-                <li><Link to="/contact">Contact</Link></li>
-                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/departments/">Departments</Link></li>
+                <li><Link to="/courses">Courses</Link></li>
+                <li><Link to="/teachers">Teachers</Link></li>
             </ul>
         </div>
     )
