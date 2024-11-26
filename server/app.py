@@ -9,6 +9,7 @@ from flask_restful import Api, Resource
 from flask_mail import Message
 from config import mail
 import random
+import datetime
 
 # Local imports
 from config import app, db, api
@@ -395,10 +396,13 @@ class AssignmentById(Resource):
             if 'published' in json:
                 assignment.published = json['published']
                 if assignment.published:
-                    assignment.due_date = json['due_date']
+                    assignment.published_at = datetime.datetime.now()
                 else:
                     assignment.due_date = None
-                
+            if 'due_date' in json and 'due_time' in json:
+                due_date = json['due_date']
+                due_time = json['due_time']
+                assignment.due_date = combine_date_time(due_date, due_time)
 
             db.session.commit()
             return assignment.to_dict()
@@ -414,6 +418,13 @@ class AssignmentById(Resource):
         else:
             return {'error': 'Assignment not found'}, 404
         
+def combine_date_time(due_date, due_time):
+  datetime_str = f"{due_date} {due_time}"
+  datetime_obj = datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+
+  return datetime_obj
+
+
 api.add_resource(AssignmentById, '/assignments/<int:assignment_id>')
 
 class AssignmentsByCourse(Resource):

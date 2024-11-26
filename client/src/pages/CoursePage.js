@@ -1,5 +1,5 @@
 import { useEffect, useState} from 'react'
-import { Routes, Route, useParams, Link, useOutletContext, useNavigate } from 'react-router-dom'
+import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom'
 
 function CoursePage() {
     const [user, setUser] = useOutletContext()
@@ -28,7 +28,7 @@ function CoursePage() {
         })
         
         
-    }, [])
+    }, [params])
 
     let mappedAssignments = []
 

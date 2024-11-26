@@ -8,6 +8,7 @@ function NewAssignment() {
     const [course, setCourse] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
+    const [user, setUser] = useOutletContext()
 
     useEffect(() => {
         fetch(`/courses/${params.courseId}`)
@@ -56,37 +57,42 @@ function NewAssignment() {
         }
     })
     if(isLoading) return <p>Loading...</p>
-    return (
-        <div>
-            <h1>Create New Assignment</h1>
-            <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="name">Title</label>
+    if(!course) return <p>Course not found.</p>
+    if(!user) return <p>Unauthorized.</p>
+    if(user.id!== course.teacher_id) return <p>Unauthorized.</p>
+    else {
+        return (
+            <div>
+                <h1>Create New Assignment</h1>
+                <form onSubmit={formik.handleSubmit}>
+                    <label htmlFor="name">Title</label>
+                    <br />
+                    <input
+                        id="name"
+                        name="name"
+                        onChange={formik.handleChange}
+                        value={formik.values.name}
+                    />
+                    <p style={{ color: "red" }}> {formik.errors.name}</p>
+                    <br />
+                    <label htmlFor="description">Description</label>
+                    <br />
+                    <textarea
+                        id="description"
+                        name="description"
+                        onChange={formik.handleChange}
+                        value={formik.values.description}
+                    />
+                    <p style={{ color: "red" }}> {formik.errors.description}</p>
+                    <br />
+                    <button type='submit'>Submit</button>
+                    <br />
+                </form>
                 <br />
-                <input
-                    id="name"
-                    name="name"
-                    onChange={formik.handleChange}
-                    value={formik.values.name}
-                />
-                <p style={{ color: "red" }}> {formik.errors.name}</p>
-                <br />
-                <label htmlFor="description">Description</label>
-                <br />
-                <textarea
-                    id="description"
-                    name="description"
-                    onChange={formik.handleChange}
-                    value={formik.values.description}
-                />
-                <p style={{ color: "red" }}> {formik.errors.description}</p>
-                <br />
-                <button type='submit'>Submit</button>
-                <br />
-            </form>
-            <br />
-            <Link to={`/courses/${course.id}`}>Back to Course Page</Link>
-        </div>
-    )
+                <Link to={`/courses/${course.id}`}>Back to Course Page</Link>
+            </div>
+        )
+    }
 }
 
 export default NewAssignment;
