@@ -7,6 +7,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     const [enrollment, setEnrollment] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isCreatingSubmission, setCreateSubmission] = useState(false)
+    const [isSubmitted, setSubmitted] = useState(false)
 
     useEffect(() => {
         fetch(`/enrollments/${enrollmentId}`)
@@ -23,21 +24,56 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
         submission_text: '',
     }
 
-    const formik = useFormik()
+    const formSchema = yup.object({
+        submission_text: yup.string().required('Submission is required'),
+    })
 
-    const submissionForm = () => {
-        setCreateSubmission(true)
-        return (
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Submission:
-                    <input type="text" name="submission" value={formik.values.submission} onChange={formik.handleChange} />
-                </label>
-                <br />
-                <button type="submit">Submit</button>
-            </form>
-        )
-    }
+    const formik = useFormik({
+        initialValues,
+        validationSchema: formSchema,
+        onSubmit: (values) => {
+            fetch(`/submissions`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    enrollment_id: enrollmentId,
+                    assignment_id: assignment.id,
+                    submission_text: values.submission_text,
+                }),
+            })
+           .then(response => response.json())
+           .then(data => {
+                console.log(data)
+                // Update the state of the enrollment with the new submission
+                setEnrollment(prevEnrollment => ({
+                   ...prevEnrollment,
+                    submissions: [...prevEnrollment.submissions, data],
+                }))
+                setCreateSubmission(false)
+            })
+        },
+    })
+
+    const submissionForm = 
+    (
+        <form onSubmit={formik.handleSubmit}>
+            <label htmlFor="submission_text">Submission</label>
+            <br />
+            <textarea
+                id="submission_text"
+                name="submission_text"
+                onChange={formik.handleChange}
+                value={formik.values.submission_text}
+            />
+            <p style={{ color: "red" }}> {formik.errors.submission_text}</p>
+            <br />
+            {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
+            <button>Cancel</button>
+        </form>
+    )
+    
 
     if(isLoading) {
         return <p>Loading...</p>
@@ -54,9 +90,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
                 <br />
                 <br />
 
-                {isCreatingSubmission? (
-                    {submissionForm}
-                ) : <button onClick={() => setCreateSubmission(true)}>Submit Assignment</button>
+                {isCreatingSubmission? submissionForm : <button onClick={() => setCreateSubmission(true)}>Submit Assignment</button>
                 }
             </div>
         )
