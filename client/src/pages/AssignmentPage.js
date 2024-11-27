@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {Link, useOutletContext, useParams,  useNavigate} from 'react-router-dom'
 import AssignmentTeacherView from '../components/AssignmentTeacherView'
+import AssignmentStudentView from '../components/AssignmentStudentView'
 
 function AssignmentPage() {
     const params = useParams()
@@ -69,9 +70,13 @@ function AssignmentPage() {
     if (assignment) {
         if (user) {
             if (user.id === assignment.course.teacher_id) {
-                return <AssignmentTeacherView params={params} assignment={assignment} setAssignment={setAssignment} courseId={courseId} formatDate={formatDate} formatTime={formatTime} />
+                return <AssignmentTeacherView params={params} assignment={assignment} setAssignment={setAssignment} courseId={courseId} formatDate={formatDate} formatTime={formatTime}/>
             }
             //else if assignment course is in student's list
+            else if (user.user_type === 'student')  {
+                const enrollment = user.course_enrollments.find(enrollment => enrollment.course_id === courseId)
+                return <AssignmentStudentView params={params} assignment={assignment} enrollmentId={enrollment.id}/>
+            }
         }
         else {
             return (

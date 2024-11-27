@@ -3,9 +3,11 @@ import {Outlet, Link} from'react-router-dom';
 import ManageCourses from './ManageCourses';
 import ManageTeachers from './ManageTeachers';
 import ManageStudents from './ManageStudents';
+import ManageEnrollments from './ManageEnrollments';
 
 function AdminDashboard({admin})  {
     const [managedType,  setManagedType] = useState('')
+
 
     function handleManagedComponent(linkType) {
         if(linkType === managedType) {
@@ -21,12 +23,13 @@ function AdminDashboard({admin})  {
         managedComponent = <ManageCourses />
     }
     else if(managedType === 'teachers') {
-        //return <Outlet name='teachers' />
         managedComponent = <ManageTeachers />
     }
     else if(managedType ==='students') {
-        //return <Outlet name='students' />
         managedComponent = <ManageStudents />
+    }
+    else if (managedType === 'enrollments') {
+        managedComponent = <ManageEnrollments />
     }
     else {
         managedComponent = null
@@ -46,6 +49,10 @@ function AdminDashboard({admin})  {
             <br />
             <div>
                 <button onClick={() => handleManagedComponent('students')}>Manage Students</button>
+            </div>
+            <br />
+            <div>
+                <button onClick={() => handleManagedComponent('enrollments')}>Approve Enrollments</button>
             </div>
             <br />
             {

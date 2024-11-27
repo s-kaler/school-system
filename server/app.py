@@ -276,6 +276,41 @@ class Students(Resource):
     
 api.add_resource(Students, '/students', endpoint='students')
 
+class StudentById(Resource):
+    def get(self, student_id):
+        student = Student.query.filter(Student.id == student_id).first()
+        if student:
+            return student.to_dict()
+        else:
+            return {'error': 'Student not found'}, 404
+        
+    def patch(self, student_id):
+        student = Student.query.filter(Student.id == student_id).first()
+        if student:
+            json = request.get_json()
+            if 'first_name' in json:
+                student.first_name = json['first_name']
+            if 'last_name' in json:
+                student.last_name = json['last_name']
+            if 'email' in json:
+                student.email = json['email']
+
+            db.session.commit()
+            return student.to_dict()
+        else:
+            return {'error': 'Student not found'}, 404
+        
+    def delete(self, student_id):
+        student = Student.query.filter(Student.id == student_id).first()
+        if student:
+            db.session.delete(student)
+            db.session.commit()
+            return {}, 204
+        else:
+            return {'error': 'Student not found'}, 404
+        
+api.add_resource(StudentById, '/students/<int:student_id>')
+
 
 class Email(Resource):
     def post(self):
@@ -351,6 +386,17 @@ class CoursesByTeacher(Resource):
         return make_response(course_dict_list, 200)
     
 api.add_resource(CoursesByTeacher, '/teachers/<int:teacher_id>/courses')
+
+class CoursesByStudent(Resource):
+    def get(self, student_id):
+        enrollments = CourseEnrollment.query.filter(CourseEnrollment.student_id == student_id).all()
+        if not enrollments:
+            return {'error': 'No courses found for this student'}, 404
+        enrollment_dict_list = [enrollment.to_dict() for enrollment in enrollments]
+        return make_response(enrollment_dict_list, 200)
+    
+    
+api.add_resource(CoursesByStudent, '/students/<int:student_id>/enrollments')
 
 
 class Assignments(Resource):
@@ -438,7 +484,114 @@ class AssignmentsByCourse(Resource):
 
 api.add_resource(AssignmentsByCourse, '/courses/<int:course_id>/assignments')
 
+class Enrollments(Resource):
+    def get(self):
+        enrollments = CourseEnrollment.query.all()
+        return [enrollment.to_dict() for enrollment in enrollments]
+    
+    def post(self):
+        json = request.get_json()
+        if 'courseId' not in json or'studentId' not in json:
+            return {'error': 'Missing required fields'}, 422
+        
+        enrollment = CourseEnrollment(
+            course_id=json['courseId'],
+            student_id=json['studentId'],
+            enrollment_date=None,
+            approved=False
+        )
 
+        db.session.add(enrollment)
+        db.session.commit()
+        return enrollment.to_dict(), 201
+    
+api.add_resource(Enrollments, '/enrollments')
+
+class EnrollmentsToBeApproved(Resource):
+    def get(self):
+        enrollments = CourseEnrollment.query.filter(CourseEnrollment.approved == False).all()
+        return [enrollment.to_dict() for enrollment in enrollments]
+    
+api.add_resource(EnrollmentsToBeApproved, '/approve_enrollments')
+
+class EnrollmentById(Resource):
+    def get(self, enrollment_id):
+        enrollment = CourseEnrollment.query.filter(CourseEnrollment.id == enrollment_id).first()
+        if enrollment:
+            return enrollment.to_dict()
+        else:
+            return {'error': 'Enrollment not found'}, 404
+        
+    def patch(self, enrollment_id):
+        enrollment = CourseEnrollment.query.filter(CourseEnrollment.id == enrollment_id).first()
+        if enrollment:
+            json = request.get_json()
+            if 'approved' in json:
+                enrollment.approved = json['approved']
+                if enrollment.approved:
+                    enrollment.enrollment_date = datetime.datetime.now()
+                else:
+                    enrollment.enrollment_date = None
+            db.session.commit()
+            return enrollment.to_dict()
+        else:
+            return {'error': 'Enrollment not found'}, 404
+
+api.add_resource(EnrollmentById, '/enrollments/<int:enrollment_id>')
+
+class Submissions(Resource):
+    def get(self):
+        submissions = Submission.query.all()
+        return [submission.to_dict() for submission in submissions]
+    
+    def post(self):
+        json = request.get_json()
+        if 'courseEnrollmentId' not in json or 'assignmentId' not in json:
+            return {'error': 'Missing required fields'}, 422
+        
+        submission = Submission(
+            course_enrollment_id=json['courseEnrollmentId'],
+            assignment_id=json['assignmentId'],
+            submitted_at=None,
+            score=None
+        )
+
+        db.session.add(submission)
+        db.session.commit()
+        return submission.to_dict(), 201
+    
+api.add_resource(Submissions, '/submissions')
+
+class SubmissionById(Resource):
+    def get(self, submission_id):
+        submission = Submission.query.filter(Submission.id == submission_id).first()
+        if submission:
+            return submission.to_dict()
+        else:
+            return {'error': 'Submission not found'}, 404
+        
+    def patch(self, submission_id):
+        submission = Submission.query.filter(Submission.id == submission_id).first()
+        if submission:
+            json = request.get_json()
+            if'score' in json:
+                submission.score = json['score']
+                submission.submitted_at = datetime.datetime.now()
+            db.session.commit()
+            return submission.to_dict()
+        else:
+            return {'error': 'Submission not found'}, 404
+        
+    def delete(self, submission_id):
+        submission = Submission.query.filter(Submission.id == submission_id).first()
+        if submission:
+            db.session.delete(submission)
+            db.session.commit()
+            return {}, 204
+        else:
+            return {'error': 'Submission not found'}, 404
+        
+api.add_resource(SubmissionById, '/submissions/<int:submission_id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

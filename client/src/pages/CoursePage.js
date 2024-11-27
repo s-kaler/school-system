@@ -1,5 +1,7 @@
 import { useEffect, useState} from 'react'
 import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom'
+import CourseStudentView from '../components/CourseStudentView'
+import CourseTeacherView from '../components/CourseTeacherView'
 
 function CoursePage() {
     const [user, setUser] = useOutletContext()
@@ -14,16 +16,16 @@ function CoursePage() {
         .then(response => response.json())
         .then(data => {
             //console.log(user)
-            //console.log(data)
+            console.log(data)
             if (data.assignments) {
                 setCourse(data)
                 if (data.assignments.length > 0) {
                     fetch(`/courses/${params.courseId}/assignments`)
                     .then(response => response.json())
-                    .then(data => {
-                        //console.log(data)
+                    .then(assignmentData => {
+                        //console.log(assignmentData)
                         setIsLoading(false)
-                        setAssignments(data)
+                        setAssignments(assignmentData)
                     })
                 }  
             }
@@ -51,32 +53,43 @@ function CoursePage() {
             })
         }
     }
-
+    
     if (course) {
         if (isLoading) { <p>Loading...</p> }
         if (user) {
-            return (
-                <div>
-                    <h1>{course.name}</h1>
-                    <p>Description: <br />{course.description}</p>
-                    <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
-                    {assignments.length > 0  ? 
-                        <div>
-                            <h3>Assignments:</h3>
-                            <ul>
-                                {mappedAssignments}
-                            </ul>
-                        </div>
-                        :
-                        <p>No assignments found.</p>
-                    }
-                    
-                    {user.id === course.teacher_id ?
-                    <button onClick={() => navigate(`/courses/${course.id}/newassignment`)}>Create Assignment</button>
-                    :
-                    <></>}
-                </div>
+            //teacher and admin view
+            if (user.user_type === 'teacher' || user.user_type === 'admin') {
+                return (
+                    <CourseTeacherView user={user} params={params} course={course} setCourse={setCourse} courseId={params.courseId} assignments={assignments} navigate={navigate} />
                 )
+            }
+            //student view
+            else {
+                //student view
+                if (user.user_type === 'student') {
+                    return (
+                        <CourseStudentView user={user} params={params} course={course} setCourse={setCourse} courseId={params.courseId} assignments={assignments} navigate={navigate} />
+                    )
+                }
+                return (
+                    <div>
+                        <h1>{course.name}</h1>
+                        <p>Description: <br />{course.description}</p>
+                        <p>Credits: {course.credits}</p>
+                        <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
+                        {assignments.length > 0?
+                            <div>
+                                <h3>Assignments:</h3>
+                                <ul>
+                                    {mappedAssignments}
+                                </ul>
+                            </div>
+                            :
+                            <p>No assignments found.</p>
+                        }
+                    </div>
+                )
+            }
         }
         else {
             <div>

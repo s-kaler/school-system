@@ -58,6 +58,7 @@ class Teacher(User):
 class Student(User):
     __tablename__ = 'students'
     __mapper_args__ = {'polymorphic_identity': 'student'}
+    serialize_rules = ('-department.students', '-department.courses', '-department.id', '-teacher.user_type', '-teacher.courses', '-teacher._password_hash', '-teacher.department','-teacher.rating', '-teacher.verification_code', '-teacher.verified', '-teacher.id', '-teacher.department_id', '-student.courses', '-course_enrollments.student', '-course_enrollments.course', '-course_enrollments.submissions', '-course_enrollments.student_id')
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     major = db.Column(db.String)
     gpa = db.Column(db.Float)
@@ -98,7 +99,9 @@ class Course(db.Model, SerializerMixin):
 #students to courses
 class CourseEnrollment(db.Model, SerializerMixin):
     __tablename__ = 'course_enrollments'
+    serialize_rules = ('-course.course_enrollments', '-student.course_enrollments', '-course.id', '-course.students', '-course.credits', '-student.courses')
     id = db.Column(db.Integer, primary_key=True)
+    approved = db.Column(db.Boolean)
     enrollment_date = db.Column(db.DateTime)
     grade = db.Column(db.Integer)
 
@@ -133,7 +136,7 @@ class Submission(db.Model, SerializerMixin):
     __tablename__ = 'submissions'
     serialize_rules = ('-course_enrollment.submissions', '-assignment.submissions', '-course_enrollment.id', '-course_enrollment.student','-course_enrollment.course','-assignment.course','-assignment.course_enrollments','-assignment.id','-assignment.name','-assignment.description','-assignment.published','-assignment.published_at','-assignment.due_date','-assignment.course_id','-assignment.course')
     id = db.Column(db.Integer, primary_key=True)
-    file_path = db.Column(db.String)
+    submission_text = db.Column(db.String)
     submitted_at = db.Column(db.DateTime)
     grade = db.Column(db.Integer)
 

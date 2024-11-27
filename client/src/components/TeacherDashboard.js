@@ -13,9 +13,12 @@ function TeacherDashboard({teacher}) {
             })
     }, [teacher.id])
 
-    const mappedCourses = courses.map(course => (
-        <li key={course.id}><Link to={`/courses/${course.id}`}>{course.name}</Link> - {course.description}</li>
-    ))
+    let mappedCourses = []
+    if (courses.length > 0) {
+        mappedCourses = courses.map(course =>
+            <li key={course.id}><Link to={`/courses/${course.id}`}>{course.name}</Link> - {course.description}</li>
+        )
+    }
 
     if (isLoading) {
         return <p>Loading...</p>
@@ -24,10 +27,15 @@ function TeacherDashboard({teacher}) {
     return (
         <div>
             <h2>Teacher Controls</h2>
-            <p>Courses:</p>
-            <ul className="courses-list">
-                {mappedCourses}
-            </ul>
+            {courses.length > 0 ?
+                <div>
+                    <h3>Courses:</h3>
+                    <ul>
+                        {mappedCourses}
+                    </ul>
+                </div>
+                :
+                <p>No assigned courses.</p>}
         </div>
     )
 }
