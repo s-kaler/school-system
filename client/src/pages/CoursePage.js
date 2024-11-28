@@ -2,6 +2,7 @@ import { useEffect, useState} from 'react'
 import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom'
 import CourseStudentView from '../components/CourseStudentView'
 import CourseTeacherView from '../components/CourseTeacherView'
+import CourseAdminView from '../components/CourseAdminView'
 
 function CoursePage() {
     const [user, setUser] = useOutletContext()
@@ -29,6 +30,7 @@ function CoursePage() {
                     })
                 }  
             }
+            setIsLoading(false)
         })
         
         
@@ -56,8 +58,14 @@ function CoursePage() {
     
     if (course) {
         if (user) {
+            //admin view
+            if (user.user_type === 'admin') {
+                return (
+                    <CourseAdminView user={user} params={params} course={course} setCourse={setCourse} courseId={params.courseId} assignments={assignments} navigate={navigate} />
+                )
+            }
             //teacher and admin view
-            if (user.user_type === 'teacher' || user.user_type === 'admin') {
+            if (user.user_type === 'teacher') {
                 return (
                     <CourseTeacherView user={user} params={params} course={course} setCourse={setCourse} courseId={params.courseId} assignments={assignments} navigate={navigate} />
                 )
@@ -73,6 +81,7 @@ function CoursePage() {
                 return (
                     <div>
                         <h1>{course.name}</h1>
+                        <p>Department: {course.department.name}</p>
                         <p>Description: <br />{course.description}</p>
                         <p>Credits: {course.credits}</p>
                         <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
@@ -90,12 +99,14 @@ function CoursePage() {
                 )
             }
         }
-        else {
+        return (
             <div>
                 <h1>{course.name}</h1>
                 <p>Description: <br />{course.description}</p>
+                <p>Credits: {course.credits}</p>
+                <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
             </div>
-        }
+        )
     }
     else {
         return <p>Course not found.</p>

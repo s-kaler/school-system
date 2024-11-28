@@ -14,10 +14,6 @@ function ManageCourses() {
             })
     }, [])
 
-    function handleEdit(course) {
-
-    }
-
 
     const mappedCourses = courses.map(course => (
         <li key={course.id}>
@@ -25,7 +21,6 @@ function ManageCourses() {
             <br/>
             Taught by {course.teacher.first_name} {course.teacher.last_name}
             <br />
-            <button onClick={() => handleEdit(course)}>Edit</button>
         </li>
     ))
 

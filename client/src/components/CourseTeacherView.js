@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import * as yup from 'yup'
 
 function CourseTeacherView({ user, course, assignments, navigate }) {
-
+    console.log(user)
     let mappedAssignments = []
 
     if (assignments.length === 0) {
@@ -23,6 +23,7 @@ function CourseTeacherView({ user, course, assignments, navigate }) {
     return (
         <div>
             <h1>{course.name}</h1>
+            <p>Department: {course.department.name}</p>
             <p>Description: <br />{course.description}</p>
             <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
             {assignments.length > 0 ?

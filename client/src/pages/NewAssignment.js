@@ -58,8 +58,7 @@ function NewAssignment() {
     })
     if(isLoading) return <p>Loading...</p>
     if(!course) return <p>Course not found.</p>
-    if(!user) return <p>Unauthorized.</p>
-    if(user.id!== course.teacher_id) return <p>Unauthorized.</p>
+    if (!user || user.id !== course.teacher_id) return <p>Unauthorized.</p>
     else {
         return (
             <div>

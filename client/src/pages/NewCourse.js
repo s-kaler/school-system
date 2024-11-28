@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 
@@ -11,6 +11,7 @@ function NewCourse() {
     const [teachers, setTeachers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useOutletContext()
 
     useEffect(() => {
         fetch("/teachers")
@@ -94,6 +95,9 @@ function NewCourse() {
         return <p>Loading...</p>
     }
 
+    if(!user || user.user_type !== 'admin') {
+        return <p>Unauthorized.</p>
+    }
     return (
         <div>
             <h1>Create New Course</h1>

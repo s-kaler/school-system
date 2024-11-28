@@ -158,6 +158,11 @@ class CourseById(Resource):
                 course.department_id = json['department_id']
             if 'teacher_id' in json:
                 course.teacher_id = json['teacher_id']
+            if 'credits' in json:
+                course.credits = json['credits']
+            if 'description' in json:
+                course.description = json['description']
+            
 
             db.session.commit()
             return course.to_dict()

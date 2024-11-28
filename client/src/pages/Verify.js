@@ -23,25 +23,29 @@ function Verify(){
     useEffect(() => {
         setIsLoading(true)
         fetch(`/users/${params.userId}`)
-           .then((response) => response.json())
-           .then((data) => {
-                if (!data.verified) {
-                    setUser(null)
-                }
-                setNewUser(data)
-                setInitialDetails({
-                    firstName: newUser['first_name'],
-                    lastName: newUser['last_name'],
-                    verified: true,
-                    password: '',
-                    confirmPassword: '',
+        .then((response) => {
+            if (response.ok) {
+                response.json().then((data) => {
+                    if (!data.verified) {
+                        setUser(null)
+                    }
+                    setNewUser(data)
+                    setInitialDetails({
+                        firstName: newUser['first_name'],
+                        lastName: newUser['last_name'],
+                        verified: true,
+                        password: '',
+                        confirmPassword: '',
+                    })
+                    setIsLoading(false)
+                    console.log(data)
                 })
+            }
+            else {
                 setIsLoading(false)
-                console.log(data)
-            })
-           .catch((error) => {
-                setIsLoading(false)
-            })
+            }
+        })
+        
     }, [])
 
     const initialToken = {
@@ -208,7 +212,7 @@ function Verify(){
     }
 
     if (isLoading) { return <p>Loading...</p> }
-    else {
+    if(newUser) {
         if (newUser){
             if(newUser.verified) {
                 return (
@@ -229,6 +233,11 @@ function Verify(){
             </div>
         )
     }
+    return (
+        <div>
+            <p>User not found.</p>
+        </div>
+    )
 }
 
 export default Verify;
