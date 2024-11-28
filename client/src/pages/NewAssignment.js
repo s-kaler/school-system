@@ -38,7 +38,7 @@ function NewAssignment() {
         initialValues,
         validationSchema: formSchema,
         onSubmit: (values) => {
-            console.log(values)
+            //console.log(values)
             fetch("/assignments", {
                 method: 'POST',
                 headers: {

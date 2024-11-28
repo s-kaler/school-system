@@ -8,6 +8,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     const [isLoading, setIsLoading] = useState(false)
     const [isCreatingSubmission, setCreateSubmission] = useState(false)
     const [submission, setSubmission] = useState(null)
+    const [isEditing, setEditing] = useState(false)
 
     //console.log(assignment)
     useEffect(() => {
@@ -16,7 +17,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
         .then(data => {
             setEnrollment(data)
             setIsLoading(false)
-            console.log(data)
+            //console.log(data)
             if(data.submissions) {
                 //check if there is already a submission in the array
                 const submission = data.submissions.find(submission => submission.assignment_id === assignment.id)
@@ -89,6 +90,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     )
     
     function handleDelete() {
+        setEditing(false)
         fetch(`/submissions/${submission.id}`, {
             method: "DELETE",
         })
@@ -100,7 +102,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     }
     if(enrollment) {
         if (submission) {
-            console.log(submission)
+            
             return (
                 <div>
                     <h3>Assignment: {assignment.name}</h3>
@@ -124,7 +126,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
                                 <div>
                                     <p>Not Yet Graded</p>
                                     <p>Date Submitted: {submission.submitted_at}</p>
-                                    <button onClick={() => handleDelete()}>Delete Submission</button>
+                                    <button type='button' onClick={() => handleDelete()}>Delete Submission</button>
                                 </div>
                             </div>}
                     </div>

@@ -10,7 +10,6 @@ import Verify from './pages/Verify';
 import CoursePage from './pages/CoursePage';
 import NewAssignment from './pages/NewAssignment';
 import AssignmentPage from './pages/AssignmentPage';
-import Departments from './pages/Departments';
 import Teachers from './pages/Teachers';
 
 
@@ -34,10 +33,6 @@ const routes = [
             {
                 path: '/courses',
                 element: <Courses />,
-            },
-            {
-                path: '/departments',
-                element: <Departments />
             },
             {
                 path: '/teachers',

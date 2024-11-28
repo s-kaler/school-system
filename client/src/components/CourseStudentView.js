@@ -5,7 +5,7 @@ import * as yup from 'yup'
 
 function CourseStudentView({ user, course, assignments, navigate }) {
     const [isRequested, setRequested] = useState(false)
-    console.log(user)
+    //console.log(user)
     const enrollment = user.course_enrollments.find(enrollment => enrollment.course_id === course.id)
     //console.log(enrollment)
 
@@ -37,7 +37,6 @@ function CourseStudentView({ user, course, assignments, navigate }) {
             if(assignment.published) {
                 return <li key={assignment.id}>
                     <Link to={`/assignments/${assignment.id}`}>{assignment.name}</Link> - Due: {assignment.due_date}
-                    <p>Published: {assignment.published ? 'Yes' : 'No'}</p>
                 </li>
             }
             

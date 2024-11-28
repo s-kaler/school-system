@@ -22,7 +22,7 @@ function Courses() {
     const departmentList = departments.map((department) => {
         return (
             <div key={department.id}>
-                <h3>{department.name}</h3>
+                <h3>{department.name} Department</h3>
                 <ul>
                     {departmentCourses(department)}
                 </ul>

@@ -16,7 +16,7 @@ function CoursePage() {
         .then(response => response.json())
         .then(data => {
             //console.log(user)
-            console.log(data)
+            //console.log(data)
             if (data.assignments) {
                 setCourse(data)
                 if (data.assignments.length > 0) {
@@ -38,7 +38,7 @@ function CoursePage() {
 
     
 
-    if (isLoading) {<p>Loading...</p>}
+    if (isLoading) {return <p>Loading...</p>}
     else {
         if (assignments.length === 0) {
             //console.log(assignments)
@@ -55,7 +55,6 @@ function CoursePage() {
     }
     
     if (course) {
-        if (isLoading) { <p>Loading...</p> }
         if (user) {
             //teacher and admin view
             if (user.user_type === 'teacher' || user.user_type === 'admin') {

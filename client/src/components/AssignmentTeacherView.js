@@ -30,13 +30,13 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             due_time: assignment.due_time,
             course_id: assignment.course_id
         })
-        setIsLoading(false)
         fetch(`/assignments/${assignment.id}/submissions`)
         .then(response => response.json())
         .then(data => {
             setSubmissions(data)
         })
-    }, [assignment])
+        setIsLoading(false)
+    }, [assignment.id])
 
 
     function editAssignment() {
@@ -82,17 +82,11 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             .then(data => {
                 const formattedDate = formatDate(data.due_date);
                 const formattedTime = formatTime(data.due_date);
-                setAssignment({
-                    course: data.course,
-                    name: data.name,
-                    description: data.description,
-                    published: data.published,
-                    published_at: data.published_at,
-                    due_date: formattedDate,
-                    due_time: formattedTime,
-                    course_id: data.course_id
-                })
-                console.log(data)
+                let fetchedAssignment = data;
+                fetchedAssignment.due_date = formattedDate;
+                fetchedAssignment.due_time = formattedTime;
+                setAssignment(fetchedAssignment)
+                //console.log(data)
                 setInitialValues({
                     name: data.name,
                     description: data.description,
@@ -188,12 +182,15 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
                     <button type="submit">Save Changes</button>
                     <br />
                     {sureToDelete ?
-                        <button onClick={() => handleDelete()}>Are you Sure?</button>
+                        <button type="button" onClick={() => handleDelete()}>Are you Sure?</button>
                         :
-                        <button onClick={() => setsureToDelete(true)}>Delete</button>
+                        <button type="button" onClick={() => setsureToDelete(true)}>Delete</button>
                     }
                     <br />
-                    <button onClick={() => setIsEditing(false)}>Cancel</button>
+                    <button type="button" onClick={() => {
+                        setIsEditing(false)
+                        setsureToDelete(false)
+                    }}>Cancel</button>
                 </form>
             </div>
         )
