@@ -7,8 +7,9 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     const [enrollment, setEnrollment] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isCreatingSubmission, setCreateSubmission] = useState(false)
-    const [isSubmitted, setSubmitted] = useState(false)
+    const [submission, setSubmission] = useState(null)
 
+    //console.log(assignment)
     useEffect(() => {
         fetch(`/enrollments/${enrollmentId}`)
         .then(response => response.json())
@@ -16,16 +17,28 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
             setEnrollment(data)
             setIsLoading(false)
             console.log(data)
-            // Fetch the assignment data based on the courseId and enrollmentId
+            if(data.submissions) {
+                //check if there is already a submission in the array
+                const submission = data.submissions.find(submission => submission.assignment_id === assignment.id)
+                console.log(submission)
+                if(submission) {
+                    setSubmission(submission)
+                }
+                else {
+                    setSubmission(null)
+                }
+            }
         })
     }, [])
 
     const initialValues = {
+        enrollment_id: enrollmentId,
+        assignment_id: assignment.id,
         submission_text: '',
     }
 
     const formSchema = yup.object({
-        submission_text: yup.string().required('Submission is required'),
+        submission_text: yup.string().required('Text is required'),
     })
 
     const formik = useFormik({
@@ -35,7 +48,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
             fetch(`/submissions`, {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     enrollment_id: enrollmentId,
@@ -52,6 +65,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
                     submissions: [...prevEnrollment.submissions, data],
                 }))
                 setCreateSubmission(false)
+                setSubmission(data)
             })
         },
     })
@@ -69,16 +83,54 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
             />
             <p style={{ color: "red" }}> {formik.errors.submission_text}</p>
             <br />
-            {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
-            <button>Cancel</button>
+            {submission ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
+            <button onClick={() => {setCreateSubmission(false)}}>Cancel</button>
         </form>
     )
     
+    function handleDelete() {
+        fetch(`/submissions/${submission.id}`, {
+            method: "DELETE",
+        })
+        .then (() => {setSubmission(null)})
+    }
 
     if(isLoading) {
         return <p>Loading...</p>
     }
     if(enrollment) {
+        if (submission) {
+            console.log(submission)
+            return (
+                <div>
+                    <h3>Assignment: {assignment.name}</h3>
+                    <p>{assignment.description}</p>
+                    <p>Due: {assignment.due_date}</p>
+                    <p>Course: {assignment.course.name}</p>
+                    <p>Student: {enrollment.student.first_name} {enrollment.student.last_name}</p>
+                    <Link to={`/courses/${assignment.course_id}`}>Back to Course Page</Link>
+                    <br />
+                    <br />
+                    <div>
+                        <h3>Your Submission</h3>
+                        <p>{submission.submission_text}</p>
+                        {submission.grade ?
+                            <div>
+                                <p>Grade: {submission.grade}</p>
+                                <p>Date Submitted: {submission.submitted_at}</p>
+                            </div>
+                            :
+                            <div>
+                                <div>
+                                    <p>Not Yet Graded</p>
+                                    <p>Date Submitted: {submission.submitted_at}</p>
+                                    <button onClick={() => handleDelete()}>Delete Submission</button>
+                                </div>
+                            </div>}
+                    </div>
+                </div>
+            )
+        }
         return (
             <div>
                 <h3>Assignment: {assignment.name}</h3>
@@ -89,8 +141,8 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
                 <Link to={`/courses/${assignment.course_id}`}>Back to Course Page</Link>
                 <br />
                 <br />
-
-                {isCreatingSubmission? submissionForm : <button onClick={() => setCreateSubmission(true)}>Submit Assignment</button>
+                {
+                    isCreatingSubmission ? submissionForm : <button onClick={() => setCreateSubmission(true)}>Submit Assignment</button>
                 }
             </div>
         )

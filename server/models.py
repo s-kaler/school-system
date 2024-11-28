@@ -134,7 +134,7 @@ class Assignment(db.Model, SerializerMixin):
 #enrollments to assignments
 class Submission(db.Model, SerializerMixin):
     __tablename__ = 'submissions'
-    serialize_rules = ('-course_enrollment.submissions', '-assignment.submissions', '-course_enrollment.id', '-course_enrollment.student','-course_enrollment.course','-assignment.course','-assignment.course_enrollments','-assignment.id','-assignment.name','-assignment.description','-assignment.published','-assignment.published_at','-assignment.due_date','-assignment.course_id','-assignment.course')
+    serialize_rules = ('-course_enrollment.submissions', '-assignment.submissions', '-course_enrollment.id', '-course_enrollment.student.email', '-course_enrollment.student.major', '-course_enrollment.student.verification_code', '-course_enrollment.student.gpa', '-course_enrollment.student.verified', '-course_enrollment.student.user_type','-course_enrollment.student._password_hash', '-course_enrollment.course','-assignment.course','-assignment.course_enrollments','-assignment.id','-assignment.name','-assignment.description','-assignment.published','-assignment.published_at','-assignment.due_date','-assignment.course_id','-assignment.course', '-course_enrollment.enrollment_date')
     id = db.Column(db.Integer, primary_key=True)
     submission_text = db.Column(db.String)
     submitted_at = db.Column(db.DateTime)

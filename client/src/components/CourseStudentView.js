@@ -7,7 +7,7 @@ function CourseStudentView({ user, course, assignments, navigate }) {
     const [isRequested, setRequested] = useState(false)
     console.log(user)
     const enrollment = user.course_enrollments.find(enrollment => enrollment.course_id === course.id)
-    console.log(enrollment)
+    //console.log(enrollment)
 
     let mappedAssignments = []
 

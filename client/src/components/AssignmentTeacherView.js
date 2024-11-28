@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import GradeSubmission from './GradeSubmission'
 
 function AssignmentTeacherView({ params, assignment, setAssignment, courseId, formatTime, formatDate }) {
     const [isLoading, setIsLoading] = useState(true)
@@ -16,6 +17,7 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
         due_time: '',
         course_id: ''
     })
+    const [submissions, setSubmissions] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -29,6 +31,11 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             course_id: assignment.course_id
         })
         setIsLoading(false)
+        fetch(`/assignments/${assignment.id}/submissions`)
+        .then(response => response.json())
+        .then(data => {
+            setSubmissions(data)
+        })
     }, [assignment])
 
 
@@ -109,6 +116,15 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             })
     }
 
+    let mappedSubmissions = []
+    if (submissions) {
+        mappedSubmissions = submissions.map((submission, index) => {
+            return (
+                <GradeSubmission key={index} submission={submission} assignment={assignment} params={params} index={index} />
+            )
+        })
+    }
+
     if (isLoading) {
         return <p>Loading...</p>
     }
@@ -182,6 +198,7 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             </div>
         )
     }
+
     else {
         return (
             <div>
@@ -196,6 +213,19 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
                 <br />
                 <br />
                 <Link to={`/courses/${assignment.course_id}`}>Back to Course Page</Link>
+                <br />
+                {
+                    submissions.length > 0 ?
+                    <div>
+                        <h2>Submissions</h2>
+                        <ul>
+                            {mappedSubmissions}
+                        </ul>
+                    </div>
+                    :
+                    <p>No submissions yet.</p>
+                }
+                
             </div>
         )
     }

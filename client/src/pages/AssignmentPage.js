@@ -19,6 +19,7 @@ function AssignmentPage() {
                 const formattedDate = formatDate(data.due_date);
                 const formattedTime = formatTime(data.due_date);
                 setAssignment({
+                    id: data.id,
                     course: data.course,
                     name: data.name,
                     description: data.description,

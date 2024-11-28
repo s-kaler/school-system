@@ -546,14 +546,15 @@ class Submissions(Resource):
     
     def post(self):
         json = request.get_json()
-        if 'courseEnrollmentId' not in json or 'assignmentId' not in json:
+        if 'enrollment_id' not in json or 'assignment_id' not in json or 'submission_text' not in json:
             return {'error': 'Missing required fields'}, 422
         
         submission = Submission(
-            course_enrollment_id=json['courseEnrollmentId'],
-            assignment_id=json['assignmentId'],
-            submitted_at=None,
-            score=None
+            course_enrollment_id=json['enrollment_id'],
+            assignment_id=json['assignment_id'],
+            submission_text=json['submission_text'],
+            submitted_at=datetime.datetime.now(),
+            grade=None
         )
 
         db.session.add(submission)
@@ -574,9 +575,9 @@ class SubmissionById(Resource):
         submission = Submission.query.filter(Submission.id == submission_id).first()
         if submission:
             json = request.get_json()
-            if'score' in json:
-                submission.score = json['score']
-                submission.submitted_at = datetime.datetime.now()
+            if 'grade' in json:
+                submission.grade = json['grade']
+                
             db.session.commit()
             return submission.to_dict()
         else:
@@ -592,6 +593,14 @@ class SubmissionById(Resource):
             return {'error': 'Submission not found'}, 404
         
 api.add_resource(SubmissionById, '/submissions/<int:submission_id>')
+
+class SubmissionsForAssignment(Resource):
+    def get(self, assignment_id):
+        submissions = Submission.query.filter(Submission.assignment_id == assignment_id).all()
+        return [submission.to_dict() for submission in submissions]
+    
+api.add_resource(SubmissionsForAssignment, '/assignments/<int:assignment_id>/submissions/')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
