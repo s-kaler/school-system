@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import {Formik, useFormik} from 'formik'
 import * as yup from 'yup'
+import "../styles/Verify.css"
 
 function Verify(){
     const params = useParams()
@@ -26,19 +27,19 @@ function Verify(){
         .then((response) => {
             if (response.ok) {
                 response.json().then((data) => {
+                    //console.log(data)
                     if (!data.verified) {
                         setUser(null)
                     }
                     setNewUser(data)
                     setInitialDetails({
-                        firstName: newUser['first_name'],
-                        lastName: newUser['last_name'],
+                        firstName: data['first_name'],
+                        lastName: data['last_name'],
                         verified: true,
                         password: '',
                         confirmPassword: '',
                     })
                     setIsLoading(false)
-                    console.log(data)
                 })
             }
             else {
@@ -80,7 +81,7 @@ function Verify(){
             }
             else {
                 setIsLoading(false)
-                console.log('Invalid Verification Code')
+                //console.log('Invalid Verification Code')
                 setError('Invalid Verification Code')
             }
         }
@@ -100,6 +101,7 @@ function Verify(){
                         value={email}
                         disabled
                     />
+                    <br />
                     <br />
                     <label htmlFor="token">Verification Code:</label>
                     <br />
@@ -122,7 +124,7 @@ function Verify(){
         firstName: yup.string().required('First Name is required'),
         lastName: yup.string().required('Last Name is required'),
         password: yup.string().required('Password is required'),
-        confirmPassword: yup.string().required('Confirm Password is required').oneOf([yup.ref('password'), null], 'Passwords must match')
+        confirmPassword: yup.string().required('Confirm your password').oneOf([yup.ref('password'), null], 'Passwords must match')
     })
 
     const detailsFormik = useFormik({
@@ -130,7 +132,7 @@ function Verify(){
         initialValues: initialDetails,
         validationSchema: detailsSchema,
         onSubmit: (values) => {
-            console.log(values)
+            //console.log(values)
             fetch(`/users/${params.userId}`, {
                 method: "PATCH",
                 headers: {
@@ -142,7 +144,7 @@ function Verify(){
             .then((data) => {
                 //setNewUser(data)
                 //setRefreshPage(!refreshPage)
-                console.log(data)
+                //console.log(data)
                 setIsLoading(true)
                 navigate(`/`)
             })
@@ -216,27 +218,21 @@ function Verify(){
         if (newUser){
             if(newUser.verified) {
                 return (
-                    <div>
-                        <p>User already verified.</p>
-                    </div>
+                    <p>User already verified.</p>
                 )
             }
             return (
-                <div>
+                <div className="verification-div">
                     {isVerified ? showDetailsForm(newUser.email) : showVerification(newUser.email)}
                 </div>
             )
         }
         return (
-            <div>
-                <p>User not Found.</p>
-            </div>
+            <p>User not Found.</p>
         )
     }
     return (
-        <div>
-            <p>User not found.</p>
-        </div>
+        <p>User not found.</p>
     )
 }
 

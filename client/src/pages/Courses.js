@@ -44,7 +44,7 @@ function Courses() {
         return <p>Loading...</p>
     }
     return (
-        <div>
+        <div className="course-list-div">
             <h1>Courses</h1>
             {departmentList}
         </div>

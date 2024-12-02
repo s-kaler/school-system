@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Outlet} from "react-router-dom"
-import Login from "../pages/Login";
 import NavBar from "./NavBar";
+import "../styles/App.css"
 
 function App() {
     const [user, setUser] = useState(null);
@@ -17,18 +17,13 @@ function App() {
         });
     }, []);
 
-    function handleLogin(user) {
-        setUser(user);
-    }
 
-    function handleLogout() {
-        setUser(null);
-    }
-    
     return <div>
         <main>
             <NavBar user={user} setUser={setUser}/>
-            <Outlet context={[user, setUser]} />
+            <div className="body-div">
+                <Outlet context={[user, setUser]} />
+            </div>
         </main>
     </div>
 }

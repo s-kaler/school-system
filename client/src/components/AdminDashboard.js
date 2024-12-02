@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {Outlet, Link} from'react-router-dom';
+import {Link} from'react-router-dom';
 import ManageCourses from './ManageCourses';
 import ManageTeachers from './ManageTeachers';
 import ManageStudents from './ManageStudents';
@@ -37,24 +37,12 @@ function AdminDashboard({admin})  {
     
 
     return (
-        <div>
+        <div className="control-buttons">
             <h2>Admin Controls</h2>
-            <div>
-                <button onClick={() => handleManagedComponent('courses')}>Manage Courses</button>
-            </div>
-            <br />
-            <div>
-                <button onClick={() => handleManagedComponent('teachers')}>Manage Teachers</button>
-            </div>
-            <br />
-            <div>
-                <button onClick={() => handleManagedComponent('students')}>Manage Students</button>
-            </div>
-            <br />
-            <div>
-                <button onClick={() => handleManagedComponent('enrollments')}>Approve Enrollments</button>
-            </div>
-            <br />
+            <button className="ctrl-btn" onClick={() => handleManagedComponent('courses')}>Manage Courses</button>
+            <button className="ctrl-btn" onClick={() => handleManagedComponent('teachers')}>Manage Teachers</button>
+            <button className="ctrl-btn" onClick={() => handleManagedComponent('students')}>Manage Students</button>
+            <button className="ctrl-btn" onClick={() => handleManagedComponent('enrollments')}>Approve Enrollments</button>
             {
                 managedComponent
             }

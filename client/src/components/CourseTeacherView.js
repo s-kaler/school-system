@@ -21,7 +21,7 @@ function CourseTeacherView({ user, course, assignments, navigate }) {
     }
 
     return (
-        <div>
+        <div className="course-div">
             <h1>{course.name}</h1>
             <p>Department: {course.department.name}</p>
             <p>Description: <br />{course.description}</p>

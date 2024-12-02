@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useOutletContext, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import "../styles/NewModel.css"
 
 function NewAssignment() {
     const params = useParams()
@@ -61,9 +62,9 @@ function NewAssignment() {
     if (!user || user.id !== course.teacher_id) return <p>Unauthorized.</p>
     else {
         return (
-            <div>
+            <div className="new-model-div">
                 <h1>Create New Assignment</h1>
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} className='new-model-form'>
                     <label htmlFor="name">Title</label>
                     <br />
                     <input

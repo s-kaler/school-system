@@ -25,7 +25,7 @@ function TeacherDashboard({teacher}) {
     }
 
     return (
-        <div>
+        <div className="controls">
             <h2>Teacher Controls</h2>
             {courses.length > 0 ?
                 <div>

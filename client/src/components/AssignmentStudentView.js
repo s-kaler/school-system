@@ -104,7 +104,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
         if (submission) {
             
             return (
-                <div>
+                <div className="assignment-div">
                     <h3>Assignment: {assignment.name}</h3>
                     <p>{assignment.description}</p>
                     <p>Due: {assignment.due_date}</p>
@@ -134,7 +134,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
             )
         }
         return (
-            <div>
+            <div className="assignment-div">
                 <h3>Assignment: {assignment.name}</h3>
                 <p>{assignment.description}</p>
                 <p>Due: {assignment.due_date}</p>

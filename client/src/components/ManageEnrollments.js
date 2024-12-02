@@ -41,9 +41,9 @@ function ManageEnrollments() {
             )
         })
     }
-
+    if (isLoading) { return <p>Loading...</p> }
     return (
-        <div>
+        <div className="managed-div">
             <h3>Manage Enrollments</h3>
             <ul>
                 {mappedEnrollments}

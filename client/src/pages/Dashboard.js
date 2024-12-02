@@ -3,6 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import AdminDashboard from "../components/AdminDashboard"
 import TeacherDashboard from "../components/TeacherDashboard"
 import StudentDashboard from "../components/StudentDashboard"
+import "../styles/Dashboard.css"
 
 function Dashboard() {
     const [user, setUser] = useOutletContext();
@@ -24,11 +25,13 @@ function Dashboard() {
     }
 
     return (
-        <div>
-            <h1>My Dashboard</h1>
-            <p>
-                Welcome, {user.first_name} {user.last_name}
-            </p>
+        <div className="dashboard-container">
+            <div className="greeting">
+                <h1>My Dashboard</h1>
+                <p>
+                    Welcome, {user.first_name} {user.last_name}
+                </p>
+            </div>
             {userDashboard}
         </div>
     )

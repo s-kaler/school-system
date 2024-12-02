@@ -29,7 +29,7 @@ function ManageCourses() {
         return <p>Loading...</p>
     }
     return (
-        <div>
+        <div className="managed-div">
             <h3>Manage Courses</h3>
             <ul>
                 {mappedCourses}

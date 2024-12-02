@@ -1,0 +1,49 @@
+.new-model-div {
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    padding-top: 0px;
+    padding-bottom: 20px;
+    padding-left: 10px;
+    border-style: ridge;
+    border-color: white;
+    background-color: #191919;
+}
+
+.new-model-form {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 0%;
+    text-align: left;
+    line-height: 20px;
+}
+
+.new-model-btn {
+    margin: auto;
+}
+
+#name {
+    width: 300px;
+}
+
+#credits {
+    width: 300px;
+}
+
+#description {
+    resize: vertical;
+    width: 300px;
+    height: 50px;
+}
+
+#firstName {
+    width: 300px;
+}
+
+#lastName {
+    width: 300px;
+}
+
+#email {
+    width: 300px;
+}

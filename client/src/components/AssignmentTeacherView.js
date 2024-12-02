@@ -124,8 +124,7 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
     }
     if (isEditing) {
         return (
-            <div>
-
+            <div className="assignment-div">
                 <h2>Editing Assignment: {assignment.name}</h2>
                 <form onSubmit={formik.handleSubmit}>
                     <label htmlFor="name">Name</label>
@@ -198,7 +197,7 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
 
     else {
         return (
-            <div>
+            <div className="assignment-div">
                 <h1>{assignment.name}</h1>
                 <p>Description: <br />{assignment.description}</p>
                 <p>Due Date: {assignment.due_date}</p>

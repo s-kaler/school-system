@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 function StudentDashboard({student}) {
     const [enrollments, setEnrollments] = useState([])
@@ -32,7 +32,7 @@ function StudentDashboard({student}) {
         return <p>Loading...</p>
     }
     return (
-        <div>
+        <div className="controls">
             <h2>Student Controls</h2>
             {enrollments.length > 0 ?
             <div>

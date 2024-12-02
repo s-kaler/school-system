@@ -1,0 +1,17 @@
+.navbar {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 1%;
+    padding-right: 1%;
+    background-color: rgb(82, 142, 219);
+    font-size: larger;
+}
+
+.logging {
+    float: right;
+}
+
+.nav-link {
+    color: rgb(0, 0, 0);
+    padding-right: 5px;
+}

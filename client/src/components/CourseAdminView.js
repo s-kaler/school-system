@@ -101,13 +101,13 @@ function CourseAdminView({ user, course, assignments, navigate }) {
     })
 
     return (
-        <div>
+        <div className="course-div">
             <h1>{course.name}</h1>
             <p>Department: {course.department.name}</p>
             <p>Description: <br />{course.description}</p>
             <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
             {assignments.length > 0 ?
-                <div>
+                <div className="assignments-div">
                     <h3>Assignments:</h3>
                     <ul>
                         {mappedAssignments}
@@ -117,7 +117,8 @@ function CourseAdminView({ user, course, assignments, navigate }) {
                 <p>No assignments found.</p>
             }
             {isEditing ? 
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} className="edit-course">
+                <h3>Editing Course</h3>
                 <label htmlFor="name">Name</label>
                 <br />
                 <input
@@ -162,9 +163,6 @@ function CourseAdminView({ user, course, assignments, navigate }) {
                     </select>
                     <br />
                     <p style={{ color: "red" }}> {formik.errors.departmentId}</p>
-                    <br />
-
-
                     <label htmlFor="teachers">Select Teacher</label>
                     <br />
                     <select

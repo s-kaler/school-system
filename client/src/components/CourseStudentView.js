@@ -46,7 +46,7 @@ function CourseStudentView({ user, course, assignments, navigate }) {
     if (enrollment) {
         if (enrollment.approved) {
             return (
-                <div>
+                <div className="course-div">
                     <h1>{course.name}</h1>
                     <p>Description: <br />{course.description}</p>
                     <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
@@ -66,7 +66,7 @@ function CourseStudentView({ user, course, assignments, navigate }) {
         //approved view
         else {
             return (
-                <div>
+                <div className="course-div">
                     <h1>{course.name}</h1>
                     <p>Description: <br />{course.description}</p>
                     <p>Taught by {course.teacher.first_name} {course.teacher.last_name}</p>
@@ -78,7 +78,7 @@ function CourseStudentView({ user, course, assignments, navigate }) {
     else {
         //not enrolled view
         return (
-            <div>
+            <div className="course-div">
                 <h1>{course.name}</h1>
                 <p>Department: {course.department.name}</p>
                 <p>Description: <br />{course.description}</p>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import "../styles/NewModel.css"
 
 function NewCourse() {
     const navigate = useNavigate()
@@ -99,9 +100,9 @@ function NewCourse() {
         return <p>Unauthorized.</p>
     }
     return (
-        <div>
+        <div className="new-model-div">
             <h1>Create New Course</h1>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} className="new-model-form">
                 <label htmlFor="name">Name</label>
                 <br />
                 <input
@@ -169,7 +170,7 @@ function NewCourse() {
                 <p style={{ color: "red" }}> {formik.errors.teacherId}</p>
                 <br />
 
-                {isSubmitted ? <button disabled={true}>Submitted</button> : <button type="submit">Submit</button>}
+                {isSubmitted ? <button className="new-model-btn" disabled={true}>Submitted</button> : <button className="new-model-btn" type="submit">Submit</button>}
 
             </form>
             <p>{error}</p>

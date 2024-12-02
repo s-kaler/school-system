@@ -3,6 +3,7 @@ import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom
 import CourseStudentView from '../components/CourseStudentView'
 import CourseTeacherView from '../components/CourseTeacherView'
 import CourseAdminView from '../components/CourseAdminView'
+import "../styles/CoursePage.css"
 
 function CoursePage() {
     const [user, setUser] = useOutletContext()
@@ -79,7 +80,7 @@ function CoursePage() {
                     )
                 }
                 return (
-                    <div>
+                    <div className="course-div">
                         <h1>{course.name}</h1>
                         <p>Department: {course.department.name}</p>
                         <p>Description: <br />{course.description}</p>
@@ -100,7 +101,7 @@ function CoursePage() {
             }
         }
         return (
-            <div>
+            <div className="course-div">
                 <h1>{course.name}</h1>
                 <p>Description: <br />{course.description}</p>
                 <p>Credits: {course.credits}</p>

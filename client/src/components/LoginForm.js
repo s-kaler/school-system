@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { useOutletContext, Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";
 
 function LoginForm({ onLogin, setUser }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
 
     function handleSubmit(e) {
@@ -21,7 +21,6 @@ function LoginForm({ onLogin, setUser }) {
         }).then((r) => {
             if (r.ok) {
                 setError(null);
-                setIsLoggedIn(true);
                 const interval = setTimeout(() => {
                     r.json().then((user) => setUser(user));
                     setIsLoading(false);
@@ -35,7 +34,7 @@ function LoginForm({ onLogin, setUser }) {
     }
 
     return (
-        <div className="Login">
+        <div className="login-form">
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="email">Email Address</label>

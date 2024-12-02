@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {Link, useOutletContext, useParams,  useNavigate} from 'react-router-dom'
 import AssignmentTeacherView from '../components/AssignmentTeacherView'
 import AssignmentStudentView from '../components/AssignmentStudentView'
+import "../styles/Assignment.css"
 
 function AssignmentPage() {
     const params = useParams()

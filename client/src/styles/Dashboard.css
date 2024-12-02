@@ -1,0 +1,47 @@
+.greeting {
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    padding-left: 10px;
+}
+
+.control-buttons {
+    text-align: center;
+}
+
+.managed-div {
+    text-align: left;
+    line-height: 20px;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 2%;
+    padding-top: 0px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    border-style: ridge;
+    border-color: white;
+    background-color: #191919;
+}
+
+li {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.ctrl-btn {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.controls {
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-top: 0px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    border-style: ridge;
+    border-color: white;
+    background-color: #191919;
+}

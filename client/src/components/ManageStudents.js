@@ -24,7 +24,7 @@ function ManageStudents() {
         return <p>Loading...</p>
     }
     return (
-        <div>
+        <div className="managed-div">
             <h3>Manage Students</h3>
             <ul>
                 {mappedStudents}

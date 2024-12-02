@@ -47,7 +47,7 @@ function ManageTeachers() {
     }
 
     return (
-        <div>
+        <div className="managed-div">
             <h3>Manage Teachers</h3>
             <ul>
                 {mappedTeachers}

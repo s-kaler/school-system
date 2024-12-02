@@ -1,0 +1,19 @@
+.login-form {
+    border-style:ridge;
+    border-color: white;
+    background-color: #191919;
+    text-align: center;
+    line-height: 24px;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-top: 1%;
+    justify-items: center;
+}
+
+#email {
+    width: 300px;
+}
+
+#password {
+    width: 300px;
+}
