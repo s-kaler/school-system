@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useParams, useOutletContext, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import "../styles/NewModel.css"
+import { useUserContext } from '../components/UserContext';
+
 
 function NewAssignment() {
+    const { user } = useUserContext();
     const params = useParams()
     const [course, setCourse] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
-    const [user, setUser] = useOutletContext()
 
     useEffect(() => {
         fetch(`/courses/${params.courseId}`)

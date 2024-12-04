@@ -1,6 +1,4 @@
-import React from "react";
-
-import Courses from "./Courses.js"
+import Courses from "../components/Courses.js"
 import "../styles/Home.css";
 
 function Home() {

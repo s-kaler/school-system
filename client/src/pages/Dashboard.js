@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import React from "react";
 import AdminDashboard from "../components/AdminDashboard"
 import TeacherDashboard from "../components/TeacherDashboard"
 import StudentDashboard from "../components/StudentDashboard"
 import "../styles/Dashboard.css"
+import { useUserContext } from '../components/UserContext';
 
 function Dashboard() {
-    const [user, setUser] = useOutletContext();
+    const { user } = useUserContext();
     //console.log(user)
     let userDashboard = null
     if (user) {

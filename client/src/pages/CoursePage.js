@@ -1,12 +1,13 @@
 import { useEffect, useState} from 'react'
-import { useParams, Link, useOutletContext, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import CourseStudentView from '../components/CourseStudentView'
 import CourseTeacherView from '../components/CourseTeacherView'
 import CourseAdminView from '../components/CourseAdminView'
 import "../styles/CoursePage.css"
+import { useUserContext } from '../components/UserContext';
 
 function CoursePage() {
-    const [user, setUser] = useOutletContext()
+    const { user } = useUserContext();
     const params = useParams()
     const [course, setCourse] = useState(null)
     const [isLoading, setIsLoading] = useState(true)

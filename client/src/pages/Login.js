@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useUserContext } from "../components/UserContext";
 import LoginForm from "../components/LoginForm";
 import "../styles/Login.css"
 
 function Login( ) {
-    const [user, setUser] = useOutletContext();
+    const { setUser} = useUserContext();
 
     return (
         <LoginForm setUser={setUser}/>

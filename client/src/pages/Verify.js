@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import { useParams, useOutletContext, useNavigate } from "react-router-dom";
-import {Formik, useFormik} from 'formik'
+import { useParams, useNavigate } from "react-router-dom";
+import { useFormik } from 'formik'
 import * as yup from 'yup'
 import "../styles/Verify.css"
+import { useUserContext } from '../components/UserContext';
 
 function Verify(){
+    const { setUser } = useUserContext();
     const params = useParams()
-    const [user, setUser] = useOutletContext()
     const [newUser, setNewUser] = useState(null);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [refreshPage, setRefreshPage] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [initialDetails, setInitialDetails] = useState({
         firstName: '',
@@ -47,7 +47,7 @@ function Verify(){
             }
         })
         
-    }, [])
+    }, [params, setUser])
 
     const initialToken = {
         token: ''

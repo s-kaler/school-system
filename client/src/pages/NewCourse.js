@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import "../styles/NewModel.css"
+import { useUserContext } from '../components/UserContext';
+
 
 function NewCourse() {
     const navigate = useNavigate()
@@ -12,17 +14,26 @@ function NewCourse() {
     const [teachers, setTeachers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [user, setUser] = useOutletContext()
+    const { user } = useUserContext();
+
 
     useEffect(() => {
         fetch("/teachers")
         .then((res) => res.json())
         .then((data) => {setTeachers(data)})
         fetch("/departments")
-        .then(res => res.json())
-        .then((data) => {
-            setDepartments(data)
-            setIsLoading(false)
+            .then((res) => {
+            if (res.status === 201) {
+                res.json((data) => {
+                    setDepartments(data)
+                    setIsLoading(false)
+                })
+            }
+            else if (res.status === 422) {
+                res.json().then((data) => {
+                    setError(data.error)
+                })
+            }
         })
     }, [])
 
@@ -86,7 +97,9 @@ function NewCourse() {
 
                 }
                 else if (res.status === 422) {
-                    console.log(res.error);
+                    res.json().then((data) => {
+                        setError(data.error)
+                    })
                 }
             });
         },

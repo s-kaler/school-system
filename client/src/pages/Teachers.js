@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+//not implemented
 function Teachers() {
     const [teachers, setTeachers] = useState([])
     const [isLoading, setLoading] = useState(true)
@@ -18,6 +19,9 @@ function Teachers() {
             <Link to={`/teachers/${teacher.id}`}>{teacher.first_name} {teacher.last_name}</Link>
         </li>
     ))
+    if (isLoading) {
+        return <p>Loading...</p>
+    }
     return (
         <div>
             <h1>Teachers</h1>

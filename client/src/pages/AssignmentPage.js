@@ -1,16 +1,16 @@
 import React, {useState, useEffect} from 'react'
-import {Link, useOutletContext, useParams,  useNavigate} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import AssignmentTeacherView from '../components/AssignmentTeacherView'
 import AssignmentStudentView from '../components/AssignmentStudentView'
 import "../styles/Assignment.css"
+import { useUserContext } from '../components/UserContext';
 
 function AssignmentPage() {
     const params = useParams()
     const [assignment, setAssignment] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [courseId, setCourseId] = useState(null)
-    const navigate = useNavigate()
-    const [user, setUser] = useOutletContext()
+    const { user } = useUserContext();
 
     useEffect(() => {
         fetch(`/assignments/${params.assignmentId}`)

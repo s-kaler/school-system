@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {useFormik} from 'formik'
 import * as yup from 'yup'
 import "../styles/NewModel.css"
+import { useUserContext } from '../components/UserContext';
 
 function NewStudent() {
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(false)
     const [refreshPage, setRefreshPage] = useState(false);
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [user, setUser] = useOutletContext()
+    const { user } = useUserContext();
 
     const initialValues = {
         firstName: '',
@@ -53,10 +53,6 @@ function NewStudent() {
             });
         },
     });
-
-    if (isLoading) {
-        return <p>Loading...</p>
-    }
 
     if (!user || user.user_type !== 'admin') {
         return <p>Unauthorized.</p>

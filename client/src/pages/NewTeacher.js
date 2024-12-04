@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import "../styles/NewModel.css"
+import { useUserContext } from '../components/UserContext';
 
 function NewTeacher() {
     const navigate = useNavigate()
@@ -11,13 +12,9 @@ function NewTeacher() {
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [departments, setDepartments] = useState([]);
-    const [teachers, setTeachers] = useState([]);
-    const [user, setUser] = useOutletContext()
+    const { user } = useUserContext();
 
     useEffect(() => {
-        fetch("/teachers")
-            .then((res) => res.json())
-            .then((data) => { setTeachers(data) })
         fetch("/departments")
             .then(res => res.json())
             .then((data) => {
@@ -56,7 +53,6 @@ function NewTeacher() {
             .then((res) => {
                 if (res.status === 201) {
                     res.json((data) => {
-                        //setTeachers([...teachers, data])
                         setIsLoading(false)
                         formik.resetForm()
                         setDepartments([])
