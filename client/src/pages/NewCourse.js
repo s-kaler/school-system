@@ -21,17 +21,14 @@ function NewCourse() {
         fetch("/teachers")
         .then((res) => res.json())
         .then((data) => {setTeachers(data)})
+
         fetch("/departments")
-            .then((res) => {
-            if (res.status === 201) {
-                res.json((data) => {
+        .then((res) => {
+            //console.log(res)
+            if (res.ok) {
+                res.json().then((data) => {
                     setDepartments(data)
                     setIsLoading(false)
-                })
-            }
-            else if (res.status === 422) {
-                res.json().then((data) => {
-                    setError(data.error)
                 })
             }
         })

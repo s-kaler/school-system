@@ -35,16 +35,19 @@ function App() {
             <NavBar user={user} setUser={setUser}/>
             <div className="body-div">
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/*" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/courses/new" element={<NewCourse />} />
+                    <Route path="/newcourse" element={<NewCourse />} />
+                    <Route path="/courses/">
+                        <Route path="/courses/:courseId" element={<CoursePage />} />
+                        <Route path="/courses/:courseId/newassignment" element={<NewAssignment />} />
+                    </Route>
+                   
                     <Route path="/teachers/new" element={<NewTeacher />} />
                     <Route path="/students/new" element={<NewStudent />} />
                     <Route path="/verify/:userId" element={<Verify />} />
-                    <Route path="/courses/:courseId" element={<CoursePage />} />
                     <Route path="/assignments/:assignmentId" element={<AssignmentPage />} />
-                    <Route path="/courses/:courseId/newassignment" element={<NewAssignment />} />
                 </Routes>
             </div>
         </main>

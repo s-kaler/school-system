@@ -69,6 +69,7 @@ class Student(User):
 
 class Department(db.Model, SerializerMixin):
     __tablename__ = 'departments'
+    serialize_rules = ('-teachers.verification_code', '-teachers.courses', '-teachers.user_type', '-teachers._password_hash', '-teachers.department', '-teachers.department_id', '-teachers.rating', '-courses.course_enrollments', '-courses.department', '-courses.assignments', '-courses.teacher', '-courses.student', '-courses.department_id', )
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True)
 
