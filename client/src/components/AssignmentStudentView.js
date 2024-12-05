@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 
@@ -8,7 +8,6 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     const [isLoading, setIsLoading] = useState(false)
     const [isCreatingSubmission, setCreateSubmission] = useState(false)
     const [submission, setSubmission] = useState(null)
-    const [isEditing, setEditing] = useState(false)
 
     //console.log(assignment)
     useEffect(() => {
@@ -30,7 +29,7 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
                 }
             }
         })
-    }, [])
+    }, [assignment, enrollmentId])
 
     const initialValues = {
         enrollment_id: enrollmentId,
@@ -90,7 +89,6 @@ function AssignmentStudentView({ assignment, enrollmentId}) {
     )
     
     function handleDelete() {
-        setEditing(false)
         fetch(`/submissions/${submission.id}`, {
             method: "DELETE",
         })

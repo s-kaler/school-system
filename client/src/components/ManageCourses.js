@@ -34,7 +34,7 @@ function ManageCourses() {
             <ul>
                 {mappedCourses}
             </ul>
-            <Link to="/newcourse">Add New Course</Link>
+            <Link to="/courses/new">Add New Course</Link>
         </div>
     )
 }

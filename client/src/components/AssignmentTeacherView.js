@@ -36,7 +36,7 @@ function AssignmentTeacherView({ params, assignment, setAssignment, courseId, fo
             setSubmissions(data)
         })
         setIsLoading(false)
-    }, [assignment.id])
+    }, [assignment])
 
 
     function editAssignment() {
