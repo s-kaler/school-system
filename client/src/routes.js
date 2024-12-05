@@ -18,7 +18,7 @@ const routes = [
         element: <App />,
         children: [
             {
-                path: '/*',
+                path: '/',
                 element: <Home />
             },
             {
