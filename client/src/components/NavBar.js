@@ -1,8 +1,10 @@
-import { NavLink, Navigate, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useUserContext } from '../components/UserContext';
 import "../styles/NavBar.css";
 
-function NavBar({ user, setUser }) {
+function NavBar() {
     const navigate = useNavigate();
+    const {user, setUser} = useUserContext()
     //creating link to user's profile page
     
     function handleLoginClick() {

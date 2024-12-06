@@ -376,6 +376,7 @@ def send_email(user):
     mail.send(msg)
     return {'message': 'Email sent successfully'}
 
+
 def generate_token():
     token = random.randint(0, 9999)
     token_str = f"{token:04d}"
